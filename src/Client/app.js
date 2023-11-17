@@ -105,7 +105,6 @@ const app = {
     
 }   
 
-console.log(app);
 
 //---------------------App related functionality----------------------//
 
@@ -240,16 +239,15 @@ app.AddElement = function(...NewElements){
 }
 
 app.CreateElement = function(...Data){
-    // console.log(Data);
     const NewElements = [];
 
     for(const ElementData of Data){
         //Creating a new instance of the specified class
         const Obj = new (ElementData.Class)(...ElementData.Args);
-        Obj.Name = ElementData.Name;
-        // console.log(Obj);
-
         const Tags = (typeof(ElementData.Tags) != "object") ? {[ElementData.Tags]: true} : ArrayToObject(ElementData.Tags, true);
+
+        Obj.Name = ElementData.Name;
+        
 
         NewElements.push({
             Name: ElementData.Name,
@@ -260,7 +258,6 @@ app.CreateElement = function(...Data){
     }
 
     app.AddElement(...NewElements);
-    // console.log(app.GetElement());
     return NewElements;
 }
 

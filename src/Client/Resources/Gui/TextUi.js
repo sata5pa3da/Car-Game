@@ -35,7 +35,6 @@ class TextGui extends GuiObject{
     }
 
     Display(){
-        // console.log("sdkjhsd");
         if(this.TextScaled){
             const FontSize = this.CalculateFontSize();
 

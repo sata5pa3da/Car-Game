@@ -91,13 +91,11 @@ async function draw(){
         app.scene_status = "Update";
     }else if(scene_status == "Update"){
         const Elements = app.GetElement();
-        // console.log(Elements);
         for(const key in Elements){
             const Element = Elements[key];
 
             const obj = Element.Object;
             const requiresRefresh = obj.GetMetaData("__requiresRefresh");
-            // console.log(requiresRefresh);
             if(requiresRefresh){
                 obj.Display();
             }

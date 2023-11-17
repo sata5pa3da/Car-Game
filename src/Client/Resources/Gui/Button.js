@@ -13,7 +13,6 @@ class Button extends TextGui{
         ///Creating the button itself
         const _Button = createButton(this.Text);
         this.Button = _Button;
-        // console.log(this.Button);
 
         //Configuring the metatable for the object
         const MetaData = {

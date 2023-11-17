@@ -16,7 +16,6 @@ class GuiObject{
         const canvas = GuiObject.GetCanvas();
         const canvasPosition = canvas && canvas.position();
         
-        // console.log(canvasPosition);
         return canvasPosition || DEFAULT_CANVAS_POSITION
     }
 
@@ -58,7 +57,6 @@ class GuiObject{
         this._AbsoluteSize = {x: 0, y: 0};
 
         this._Visible = typeof(Visible) == "boolean" ? Visible : true;
-        // console.log(Position, Size, Visible);
     }
 
 
@@ -112,7 +110,6 @@ class GuiObject{
     //Returns the actual Gui object
     GetObject(){
         const MetaData = this.GetMetaData();
-        // console.log("MetaData:", MetaData);
         const obj = MetaData.__object;
 
         return obj;
@@ -254,7 +251,7 @@ class GuiObject{
         for(const tween of tweens){
             promises.push(tween.startTween(true));
         }
-        // console.log(promises);
+
         return Promise.all(promises);
     }
 
