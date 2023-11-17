@@ -105,7 +105,7 @@ const app = {
     
 }   
 
-console.log(app);
+// console.log(app);
 
 //---------------------App related functionality----------------------//
 
