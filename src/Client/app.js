@@ -106,6 +106,7 @@ const app = {
 }   
 
 
+
 //---------------------App related functionality----------------------//
 
 //Add Display Methods

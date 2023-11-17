@@ -23,6 +23,13 @@ class GuiObject{
 
     //-------------------------------Constructor-------------------------------------//
     constructor({
+        Debug = {
+            BorderWidth: 0,
+            BorderColor: null,
+
+        },
+
+
         Name = "",
         Class = "",
         Id = "",
@@ -32,7 +39,7 @@ class GuiObject{
         AnchorPoint = [0,0],
         Position = Udim2.new(),
         Size = Udim2.new(), 
-        Visible} = {}){
+        Visible,} = {}){
         
         
 
@@ -41,6 +48,9 @@ class GuiObject{
         
 
         //Public properties
+        this.Debug = Debug;
+
+
         this.Name = Name;
         this._Class = Class;
         this._Id = Id;
@@ -139,9 +149,45 @@ class GuiObject{
     
 
 
+    //Returns the object responsible for the basic rendering & updating of the display
+    GetCustomObjElement(){
+        const elementPath = this.GetMetaData("__elementPath");
+        const elementObj = StringToPath(this, elementPath);
+
+        return elementObj
+    }
+
+
+
    
 
 
+
+
+
+    //This function is called each frame for the gui object
+    DefaultDisplay(){
+        // console.log("Called");
+        const Debug = this.Debug;
+
+        const [BorderWidth, BorderColor] = [Debug.BorderWidth, Debug.BorderColor];
+        // console.log
+        if(typeof(BorderWidth) == "number" && BorderWidth > 0){
+            // console.log("Passed");
+            const [size, pos] = [this._AbsoluteSize, this._AbsolutePosition];
+            // console.log(pos, this.Position, this);
+
+            push();
+            
+            noFill();
+            stroke(BorderColor ? BorderColor.Value : color(0));
+            strokeWeight(Debug.BorderWidth);
+
+            rect(pos.x, pos.y, size.x, size.y);
+
+            pop();
+        }
+    }
     
     //This function is responsible for updating the button displayed onto the screen
     Update(sizeChanged = false){
@@ -194,8 +240,11 @@ class GuiObject{
         
 
         //Checking if this is a custom element that has a designated method to update its display
-        if(isCustomElement && typeof(this.UpdateDisplay) == "function"){
-            this.UpdateDisplay(this._AbsolutePosition, this._AbsoluteSize, sizeChanged);
+        if(isCustomElement){
+            const elementObj = this.GetCustomObjElement();
+            if(typeof(elementObj.UpdateDisplay) == "function"){
+                elementObj.UpdateDisplay(this._AbsolutePosition, this._AbsoluteSize, sizeChanged);
+            }
         }
     }
 
@@ -204,8 +253,11 @@ class GuiObject{
     Delete(){
         //Checking if this is a custom element that requires a special way to delete its object
         const isCustomElement = this.GetMetaData("__isCustomElement");
-        if(!isCustomElement && typeof(this.DeleteObject) == "function"){
-            this.DeleteObject();
+        if(isCustomElement){
+            const elementObj = this.GetCustomObjElement();
+            if(typeof(elementObj.DeleteObject) == "function"){
+                elementObj.DeleteObject();
+            }
         }else{
             //Deleting the object like normal
             const obj = this.GetObject();
@@ -292,8 +344,10 @@ class GuiObject{
         return this._Position;
     }
     set Position(value = Udim2.half){
+        // console.log("Before:", this.AbsolutePosition);
         this._Position = value;
         this.Update();
+        // console.log("After:", this.AbsolutePosition);
     }
 
     get AbsoluteSize(){
@@ -303,6 +357,7 @@ class GuiObject{
         return this._Size;
     }
     set Size(value = Udim2.half){
+        // console.log("Updated!");
         this._Size = value;
         this.Update(true);
     }

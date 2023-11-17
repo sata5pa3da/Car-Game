@@ -95,26 +95,36 @@ const GameSceneElements = [
 
 
 
-    // {
-    //     Name: "Car1",
-    //     Class: Car,
-    //     Tags: "GameScene",
+    {
+        
+
+
+        Name: "Car",
+        Class: Car,
+        Tags: "GameScene",
     
     
-    //     Args: [{
-    //        Id: "Car1",
-    //     //    Class: "",
+        Args: [{
+            Debug: {
+                BorderColor: Color.fromRGB(255, 255, 255),
+                BorderWidth: 2,
+            },
+
+
+            Id: "Car1",
+        //    Class: "",
     
-    //        AnchorPoint: [.5, .5],
-    //        Position: Udim2.fromScale(.58, .25),
-    //        Size: Udim2.fromScale(.5, .1),
+            AnchorPoint: [.5, .5],
+            Position: Udim2.fromScale(.58, .25),
+            // Size: Udim2.fromScale(.5, .1),
+            scale: .2,
     
-    //     //    Text: "Play", 
-    //     //    TextScaled: true,
-    //         // CarType: "Car1",
-    //         Color: Color.fromRGB(255, 0, 0),
-    //     }],  
-    // },
+        //    Text: "Play", 
+        //    TextScaled: true,
+            // CarType: "Car1",
+            Color: Color.fromRGB(255, 0, 0),
+        }],  
+    },
 
     // {
     //     Name: "Ped1",
@@ -160,13 +170,13 @@ const GameSceneElements = [
 
 async function GameSceneSetup(env, _G){
     
-}
+}   
 
 async function GameSceneUpdate(env, _G){
 
 }
 
-async function GameSceneCleanup(){
+async function GameSceneCleanup(env, _G){
 
 }
 
