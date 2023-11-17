@@ -94,13 +94,11 @@ async function draw(){
 
 
         const Elements = app.GetElement();
-        // console.log(Elements);
         for(const key in Elements){
             const Element = Elements[key];
 
             const obj = Element.Object;
             const requiresRefresh = obj.GetMetaData("__requiresRefresh");
-            // console.log(requiresRefresh);
 
             obj.DefaultDisplay();
             if(requiresRefresh){

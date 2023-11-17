@@ -16,7 +16,6 @@ class GuiObject{
         const canvas = GuiObject.GetCanvas();
         const canvasPosition = canvas && canvas.position();
         
-        // console.log(canvasPosition);
         return canvasPosition || DEFAULT_CANVAS_POSITION
     }
 
@@ -121,7 +120,6 @@ class GuiObject{
     //Returns the actual Gui object
     GetObject(){
         const MetaData = this.GetMetaData();
-        // console.log("MetaData:", MetaData);
         const obj = MetaData.__object;
 
         return obj;
@@ -305,7 +303,7 @@ class GuiObject{
         for(const tween of tweens){
             promises.push(tween.startTween(true));
         }
-        // console.log(promises);
+
         return Promise.all(promises);
     }
 
