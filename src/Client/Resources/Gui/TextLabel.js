@@ -15,7 +15,7 @@ class TextLabel extends TextGui{
         _TextLabel.style("cursor", "default");
         // _TextLabel.center();
         this.TextLabel = _TextLabel;
-        // console.log(this.TextLabel);
+        
 
        //Configuring the metatable for the object
         const MetaData = {

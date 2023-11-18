@@ -88,6 +88,14 @@
 	},
 
 	{
+		name: Img.js,
+		src: Resources/Gui/Img.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
 		name: Button.js,
 		src: Resources/Gui/Button.js,
 		extention: .js,
@@ -98,14 +106,6 @@
 	{
 		name: Car.js,
 		src: Resources/Gui/Car.js,
-		extention: .js,
-		async: false,
-		
-	},
-
-	{
-		name: Img.js,
-		src: Resources/Gui/Img.js,
 		extention: .js,
 		async: false,
 		

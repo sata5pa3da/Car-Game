@@ -1,7 +1,7 @@
-class Car extends GuiObject{
+class Car extends Img{
     //Static variables
     static Type = "Car";
-    static CarsList = undefined;
+    static CarsList = null;
     
 
     //Static methods
@@ -9,8 +9,8 @@ class Car extends GuiObject{
         Car.CarsList = {};
 
         const Cars = GetKeysWithPrefix(ASSETS, "Cars");
-        for(const CarName of Cars){
-            const car_obj = ASSETS[CarName];
+        for(const CarType of Cars){
+            const car_obj = ASSETS[CarType];
 
 
             car_obj.loadPixels();
@@ -36,29 +36,24 @@ class Car extends GuiObject{
             }
         
             car_obj.updatePixels();
-            Car.CarsList[GetAssetName(CarName)] = car_obj;
+            Car.CarsList[GetAssetName(CarType)] = car_obj;
         }
-    
-
-    
     }
 
 
-    static GetCar(carName, col){
+    static GetCar(CarType, col){
         if(!Car.CarsList){Car.InitCarsList()}
-
-        const carClone = Car.CarsList[carName].get();
+        const CarClone = Car.CarsList[CarType].get();
 
         if(col){
-            carClone.loadPixels();
+            CarClone.loadPixels();
 
-            let numPixels = 4 * carClone.width * carClone.height;
-            const pixels = carClone.pixels;
+            let numPixels = 4 * CarClone.width * CarClone.height;
+            const pixels = CarClone.pixels;
             
             for (let i = 0; i < numPixels; i += 4) {
-                const [red, green, blue] = [pixels[i], pixels[i+1], pixels[i+2]];  //pixels[i+3]];
-
-                
+                const [red, green, blue] = [pixels[i], pixels[i+1], pixels[i+2]];
+  
                 if(red == 255 || green == 255 || blue == 255){
                     // Red.
                     pixels[i] = col.R * 255;
@@ -69,13 +64,12 @@ class Car extends GuiObject{
                     // Alpha.
                     pixels[i + 3] = 255;
                 }
-                
             }
 
-            carClone.updatePixels();
+            CarClone.updatePixels();
         }
 
-        return carClone;
+        return CarClone;
     }
 
 
@@ -84,119 +78,24 @@ class Car extends GuiObject{
         CarType = "Car1",
         Color,
 
-        scaleType = "Fit",
     } = {}){
-        super(arguments[0]);
+        const src = Car.GetCar(CarType, Color);
+        const MetaData = {};
 
-
-        //Initializing the properties specific to the car itself
-        this.CarType = CarType;
-        this.src = "Cars/" + this.CarType + ".png";
-
-        this.scaleType = scaleType;
-        
-        
-
-        //Creating the car itself
-        const _Car = Car.GetCar(this.CarType, Color); //new Car({...arguments[0], src: this.src}) //createCar(this.src, this.alt);
-        this.Car = _Car;
-
-       
-
-
-        //Initializing the metadata for the object
-        const MetaData = {
-            __object: this.Car,
-            __isCustomElement: true,
-            __requiresRefresh: true,
-        };
-        this.MetaData = MetaData;
-
-
-
-        //Setting up the car
-        this.Setup();
-        
-
-        //Settings the size of this car object to the width and height of the actual car image if no size argument was passed in 
-        if(this.Size.Magnitude <= 0){
-            this.Size = Udim2.toScale(this.Car.width, this.Car.height);
-        }
-
+        super({...arguments[0], src: src, AdditionalMetaData: MetaData, AdditionalData: {
+            CarType: CarType,
+        }});
     }
 
 
 
     //----------------------Methods-------------------------//
-    Display(){
-        if(!this.Visible || !this.CanDisplay){return}
-        
-        
-        const [position, size] = [this._AbsolutePosition, this._AbsoluteSize];
-         
-        switch(this.scaleType){
-            case "Fit":
-                const [carWidth, carHeight] = this.CarSize;
-                const carRatio = carWidth / carHeight;
 
-                let absCarWidth, absCarHeight;
-                if(carWidth > carHeight){
-                    absCarWidth = min(size.x, size.y * carRatio);
-                    absCarHeight = absCarWidth / carRatio;
-                }else{
-                    absCarHeight = min(size.y, size.x / carRatio);
-                    absCarWidth = absCarHeight * carRatio;
-                }
-                
-                
-                const absX = position.x + (size.x - absCarWidth) / 2;
-                const absY = position.y + (size.y - absCarHeight) / 2;
-                
-                
-
-                image(this.Car, absX, absY, absCarWidth, absCarHeight);      
-                break;
-
-
-            case "Stretch":
-                image(this.Car, position.x, position.y, size.x, size.y);
-                break;
-        }
-
-        // push();
-        // noFill();
-        // // fill(color(255,0,0));
-        // strokeWeight(3);
-        // stroke(color(255, 0, 0));
-
-        // rect(position.x, position.y, size.x, size.y);
-        // pop();
-    }
-
-    Resize(w, h){
-        const obj = this.GetObject();
-        obj.resize(w, h);
-
-        this.Size = Udim2.toScale(obj.width, obj.height);
-    }
-
-    Scale(widthScale, heightScale){
-        heightScale = heightScale ? heightScale : widthScale;
-
-        const obj = this.GetObject();
-
-        const size = this.Size;
-        this.Size = Udim2.new(size.x.Scale * widthScale, size.x.Offset * widthScale, size.y.Scale * heightScale, size.y.Offset * heightScale);
-    }
-
-    MoveTo(){
-
-    }
 
 
     //-------------------Getters/Setters-------------------------
     get Type(){
-        return Img.Type;
+        return Car.Type;
     }
 
 

@@ -3,10 +3,12 @@ function GenerateUniqueId(){
 }
 
 function StringToPath(object, string,  separator = "."){
+    if(!string){return object}
     const splitted = string.split(separator);
 
     let cur = object;
     for(const substring of splitted){
+        if(substring == ""){break}
         cur = cur[substring];
     }
 

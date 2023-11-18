@@ -72,14 +72,13 @@ function loadJS(FILE_URL, async = true) {
 //-----------------Site loading methods
 async function LoadSite(data){
     if(!data){
-      console.log(HREF);
       const res = await fetch(HREF + "Data");
       const response = await res.json();
 
       data = response.Data;
     }
     
-    console.log(data);
+    // console.log(data);
     
 
     

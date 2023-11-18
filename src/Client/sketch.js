@@ -90,16 +90,26 @@ async function draw(){
 
         app.scene_status = "Update";
     }else if(scene_status == "Update"){
+        background(app.displaySettings.Background.Value);
+
+
         const Elements = app.GetElement();
-        // console.log(Elements);
         for(const key in Elements){
             const Element = Elements[key];
 
             const obj = Element.Object;
             const requiresRefresh = obj.GetMetaData("__requiresRefresh");
-            // console.log(requiresRefresh);
+
+            obj.DefaultDisplay();
             if(requiresRefresh){
-                obj.Display();
+                const elementPath = obj.GetMetaData("__elementPath");
+                if(elementPath){
+                    const elementObj = StringToPath(obj, elementPath);
+                    elementObj.Display();
+                }else{
+                    obj.Display();
+                }
+                
             }
         }
 
@@ -128,168 +138,5 @@ function CalculateWindowSize(){
 
     return [windowWidth * widthScale, windowHeight * heightScale];
 }
-
-
-
-
-// //---------------------App related functionality----------------------//
-
-// //Add Display Methods
-// app.RefreshDisplay = function(){
-//     noLoop();
-
-//     const displaySettings = app.displaySettings;
-
-//     background(displaySettings.Background.Value);
-
-//     app.ForEachElement((_, Element) => {
-//         const obj = Element.Object;
-//         obj.Update(true);
-//     });
-
-//     loop();
-// }
-
-
-// //Scenes Properties Methods
-// app.RegisterScene = function(scene, Setup, Update, Cleanup){
-//     app.registered_scenes[scene] = {
-//         Setup: Setup,
-//         Update: Update,
-//         Cleanup: Cleanup,
-//     }
-//     app.registered_scenes_amount ++;
-// }
-
-
-// //Scenes Data Methods
-// app.GetElement = function(ElementName){
-//     const Elements = app.uiElements;
-//     return ElementName ? Elements[ElementName] : Elements;
-// }
-
-// app.GetElements = function(Criteria){
-//     const Elements = app.GetElement();
-//     const CustomElements = [];
-
-//     for(const ElementName in Elements){
-//         const Element = Elements[ElementName];
-//         if(!Criteria || Criteria(Element)){
-//             CustomElements.push(Element);
-//         }
-//     }
-
-//     return CustomElements;
-// }
-
-
-// app.GetElementsWithTag = function(...Tags){
-//     //Converts the Tags array to an object
-//     Tags = ArrayToObject(Tags);
-    
-//     return app.GetElements((Element) => {
-//         return Tags[Element.Tag];
-//     });
-// }
-
-
-
-
-
-// function clone(obj){
-//     const newObj = {};
-//     for(const key in obj){
-//         newObj[key] = obj[key];
-//     }
-//     return newObj;
-// }
-
-// app.AddElement = function(...NewElements){
-//     const Elements = app.GetElement();
-//     ArrayToObject(NewElements, null, Elements, (_, val) => {return val.Name});
-// }
-
-// app.CreateElement = function(...Data){
-//     const NewElements = [];
-
-//     for(const ElementData of Data){
-//         //Creating a new instance of the specified class
-//         const Obj = new (ElementData.Class)(...ElementData.Args);
-//         const Tags = (typeof(ElementData.Tags) != "object") ? {[ElementData.Tags]: true} : ArrayToObject(ElementData.Tags, true);
-
-//         NewElements.push({
-//             Name: ElementData.Name,
-//             Object: Obj,
-//             Tags: Tags,
-
-//         });
-//     }
-
-//     app.AddElement(...NewElements);
-//     return NewElements;
-// }
-
-// app.CreateElementWithTags = function(Tags, ...Data){
-//     //Converting the tag argument to an array if it is not an array
-//     Tags = (typeof(Tags) != "object") ? {[Tags]: true} : ArrayToObject(Tags, true);
-
-//     //Setting the tag property of the element datas
-//     for(const ElementData of Data){
-//         ElementData.Tags = Tags;
-//     }
-
-//     return app.CreateElement(...Data);
-// }
-
-
-
-// app.ForEachElement = function(callback, isSync = true){
-//     let resolve;
-//     const returnPromise = new Promise((res) => {resolve = res});
-
-
-//     const PendingLoops = 0;
-
-//     const Elements = app.GetElement();
-//     for(const ElementName in Elements){
-//         if(isSync){
-//             callback(ElementName, Elements[ElementName]);
-//         }else{
-//             PendingLoops++;
-//             new Promise(() => {
-//                 callback(ElementName, Elements[ElementName]);
-
-//                 PendingLoops--;
-//                 if(PendingLoops <= 0){
-//                     resolve();
-//                 }
-//             });
-//         }
-//     }
-
-
-//     if(isSync){
-//         resolve();
-//     }
-//     return returnPromise;
-// }
-
-
-
-// app.RemoveElement = function(...ElementNames){
-//     for(const ElementName of ElementNames){
-//         const Element = app.GetElement(ElementName);
-//         const Obj = Element.Obj;
-
-//         Obj.Delete();
-//     }
-// }
-
-// app.ClearElements = async function(){
-//     const ElementNames = [];
-
-//     await app.ForEachElement((ElementName) => {ElementNames.push(ElementName)});
-//     app.RemoveElement(...ElementNames);
-// }
 
 
