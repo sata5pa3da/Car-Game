@@ -158,8 +158,14 @@ const GameSceneElements = [
 
 ];
 
+
 async function GameSceneSetup(env, _G){
-    
+    // console.log("Setup!");
+    const Event = EventHandler.keyPressed(["a", "w"], (event) => {
+        console.log("Yess!", event);
+    });
+
+    // Do(Event);
 }
 
 async function GameSceneUpdate(env, _G){

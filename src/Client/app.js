@@ -1,3 +1,4 @@
+//---------------------------App Initialization------------------------------//
 const app = {
     //App display properties
     displaySettings: {
@@ -105,7 +106,7 @@ const app = {
     
 }   
 
-console.log(app);
+
 
 //---------------------App related functionality----------------------//
 
@@ -321,7 +322,6 @@ app.RemoveElement = function(...ElementNames){
         delete Elements[ElementName];
     }
 }
-
 app.ClearElements = async function(){
     const ElementNames = [];
 
@@ -329,3 +329,8 @@ app.ClearElements = async function(){
     app.RemoveElement(...ElementNames);
 }
 
+
+
+
+
+//----------------------------------Window event detection---------------------------------//

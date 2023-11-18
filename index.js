@@ -14,6 +14,7 @@ const ClientScriptsOrder = [
     {src: "Resources/Utils", async: false, priority: {
         "wait.js": 0,
         "Tween.js": 1,
+        "EventBinder.js": 2,
     }},
 
     {src: "Resources/DataTypes", async: false, priority: {

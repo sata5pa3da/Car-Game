@@ -16,6 +16,14 @@
 	},
 
 	{
+		name: EventBinder.js,
+		src: Resources/Utils/EventBinder.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
 		name: ArrayUtils.js,
 		src: Resources/Utils/ArrayUtils.js,
 		extention: .js,
