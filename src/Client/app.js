@@ -1,3 +1,4 @@
+//---------------------------App Initialization------------------------------//
 const app = {
     //App display properties
     displaySettings: {
@@ -319,7 +320,6 @@ app.RemoveElement = function(...ElementNames){
         delete Elements[ElementName];
     }
 }
-
 app.ClearElements = async function(){
     const ElementNames = [];
 
@@ -327,3 +327,8 @@ app.ClearElements = async function(){
     app.RemoveElement(...ElementNames);
 }
 
+
+
+
+
+//----------------------------------Window event detection---------------------------------//

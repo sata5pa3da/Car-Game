@@ -96,9 +96,6 @@ const GameSceneElements = [
 
 
     {
-        
-
-
         Name: "Car",
         Class: Car,
         Tags: "GameScene",
@@ -112,61 +109,22 @@ const GameSceneElements = [
 
 
             Id: "Car1",
-        //    Class: "",
+            // Class: "",
     
-            AnchorPoint: [.5, .5],
-            Position: Udim2.fromScale(.58, .25),
+            AnchorPoint: [.5, 1],
+            Position: Udim2.fromScale(.5, 1),
             // Size: Udim2.fromScale(.5, .1),
             scale: .2,
     
-        //    Text: "Play", 
-        //    TextScaled: true,
             // CarType: "Car1",
             Color: Color.fromRGB(255, 0, 0),
         }],  
     },
 
-    // {
-    //     Name: "Ped1",
-    //     Class: Pedestrian,
-    //     Tags: "GameScene",
-    
-    
-    //     Args: [{
-    //         Id: "Ped1",
-    //     //    Class: "",
-    
-    //         AnchorPoint: [.5, .5],
-    //         Position: Udim2.fromScale(.75, .5), //() => {return Udim2.toScale(100, 100)},
-    //         Size: Udim2.fromScale(.15,.5), //() => {return Udim2.toScale(100, 100)},
-    
-    //         data: {
-    //             root: {
-    //                 scale: [.35, .2],
-    //             },
-
-    //             head: {
-    //                 scale: [0.5, .15],
-    //                 offset: 0.01,
-    //             },
-
-    //             arms: {
-    //                 scale: [0.22, 0.4],
-    //                 offset: 0.02,
-
-    //             },
-
-    //             legs: {
-    //                 scale: [.22, .4],
-    //                 offset: 0.015,
-    //             },
-
-    //         },
-    //         Color: Color.fromRGB(255, 0, 0),
-    //     }],   
-    // },
+   
 
 ];
+
 
 async function GameSceneSetup(env, _G){
     
