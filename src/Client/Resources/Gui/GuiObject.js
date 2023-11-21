@@ -62,6 +62,7 @@ class GuiObject{
         
         this._Position = typeof(Position) == "function" ? Position() : Position;
         this._AbsolutePosition = {x: 0, y: 0};
+        this._AbsoluteAnchorPosition = {x: 0, y:0};
         
         this._Size = typeof(Size) == "function" ? Size() : Size;
         this._AbsoluteSize = {x: 0, y: 0};
@@ -70,6 +71,9 @@ class GuiObject{
     }
 
 
+
+    //-------------------------------------Private Methods------------------------------------//
+    
 
     //-------------------------------------Core Methods----------------------------------------//
 
@@ -205,8 +209,12 @@ class GuiObject{
         
 
         //Updating the absolute position/size property of the object
+        this._AbsoluteAnchorPosition.x = posVector.x;
+        this._AbsoluteAnchorPosition.y = posVector.y;
+
         this._AbsolutePosition.x = absX;
         this._AbsolutePosition.y = absY;
+
 
         this._AbsoluteSize.x = sizeVector.x;
         this._AbsoluteSize.y = sizeVector.y;
@@ -287,7 +295,6 @@ class GuiObject{
             const This = this;
             return Tween.addMotions(motions, duration, easing_style)
                 .bindToUpdate("__Update", (tween, dt) => {
-                    // value.x.Scale = 
                     This.Update(value == This._Size ? true : false);
                     
                     if(This.GetMetaData("__requiresRefresh")){
@@ -339,6 +346,9 @@ class GuiObject{
 
     get AbsolutePosition(){
         return this._AbsolutePosition;
+    }
+    get AbsoluteAnchorPosition(){
+        return this._AbsoluteAnchorPosition;
     }
     get Position(){
         return this._Position;

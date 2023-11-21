@@ -41,13 +41,13 @@ const GameSceneElements = [
     // },
 
     {
-        Name: "Road1",
+        Name: "Road",
         Class: Road,
         Tags: "Roads",
 
         Args: [
             {
-                Size: Udim2.fromScale(.95,1),
+                Size: Udim2.fromScale(.7,1),
                 Position: Udim2.fromScale(.5, .5),
                 AnchorPoint: [.5, .5],
 
@@ -103,7 +103,7 @@ const GameSceneElements = [
     
         Args: [{
             Debug: {
-                BorderColor: Color.fromRGB(255, 255, 255),
+                BorderColor: Color.fromRGB(255, 0, 0),
                 BorderWidth: 2,
             },
 
@@ -112,7 +112,7 @@ const GameSceneElements = [
             // Class: "",
     
             AnchorPoint: [.5, 1],
-            Position: Udim2.fromScale(.5, 1),
+            Position: Udim2.fromScale(1/4, 1),
             // Size: Udim2.fromScale(.5, .1),
             scale: .2,
     
@@ -126,8 +126,57 @@ const GameSceneElements = [
 ];
 
 
+
+
+
+
 async function GameSceneSetup(env, _G){
-    
+    const Road = app.GetElementObject("Road");
+    const Car = app.GetElementObject("Car");
+
+
+    env.TotalLanes = Road.GetLanes();
+    env.CurrentLane = 2;
+
+    env.CanUpdate = true;
+
+
+    //Local methods
+    async function Update(direction){
+        if(!env.CanUpdate){return}
+        env.CanUpdate = false;
+
+        const newLane = direction ? constrain(env.CurrentLane + direction, 1, env.TotalLanes) : env.CurrentLane;
+        if(!direction || newLane != env.CurrentLane){
+            env.CurrentLane = newLane;
+
+            const lanePosition = Road.GetLanePosition(env.CurrentLane);
+            
+            const newPosition = Udim2.toScale(lanePosition.x, Car.AbsoluteAnchorPosition.y);
+
+            if(direction){
+                const posTween = Car.CreateTween(Car.Position, newPosition, .1, "easeInQuart");
+                await Car.WaitForTweens(posTween);
+            }else{
+                Car.Position = newPosition;
+            }
+            
+        }
+
+        env.CanUpdate = true;
+    }
+
+
+    //Events declaration
+    const OnLeftEvent = EventHandler.keyPressed(["a", LEFT_ARROW], (event) => {Update(-1);});
+    const OnRightEvent = EventHandler.keyPressed(["d", RIGHT_ARROW], (event) => {Update(1)});
+
+
+    //Setup
+    const LaneSize = Road.GetLaneSize();
+    console.log(LaneSize);
+    Car.Resize(LaneSize);
+    Update();
 }   
 
 async function GameSceneUpdate(env, _G){
