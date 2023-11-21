@@ -63,9 +63,12 @@ const app = {
     /**Returns the scene object for the specified name*/
     GetScene: undefined,
 
+    /**Returns the scene status for the current scene*/
+    GetSceneStatus: undefined,
+
+
     /**Returns the scene object for the current scene*/
     GetCurrentScene: undefined,
-
 
     /**Returns the scene object for the previous scene (if one exists)*/
     GetPreviousScene: undefined,
@@ -169,6 +172,10 @@ app.GetScene = function(SceneName){
     const Scenes = app.registered_scenes;
 
     return SceneName ? Scenes[SceneName] : Scenes;
+}
+
+app.GetSceneStatus = function(){
+    return app.scene_status;
 }
 
 app.GetCurrentScene = function(){

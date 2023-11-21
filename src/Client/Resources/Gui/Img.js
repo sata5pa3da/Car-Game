@@ -113,7 +113,7 @@ class Img extends GuiObject{
 
     Resize(w, h){
         const obj = this.GetObject();
-        obj.resize(w, h);
+        obj.resize(w || 0, h || 0);
 
         this.Size = Udim2.toScale(obj.width, obj.height);
     }
