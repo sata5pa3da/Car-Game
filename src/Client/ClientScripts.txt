@@ -1,0 +1,193 @@
+[
+	{
+		name: wait.js,
+		src: Resources/Utils/wait.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Tween.js,
+		src: Resources/Utils/Tween.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: EventBinder.js,
+		src: Resources/Utils/EventBinder.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: ArrayUtils.js,
+		src: Resources/Utils/ArrayUtils.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: ColorUtils.js,
+		src: Resources/Utils/ColorUtils.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: StringUtils.js,
+		src: Resources/Utils/StringUtils.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Typewriter.js,
+		src: Resources/Utils/Typewriter.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Udim.js,
+		src: Resources/DataTypes/Udim.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Udim2.js,
+		src: Resources/DataTypes/Udim2.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: GuiObject.js,
+		src: Resources/Gui/GuiObject.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: TextUi.js,
+		src: Resources/Gui/TextUi.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Img.js,
+		src: Resources/Gui/Img.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Vehicle.js,
+		src: Resources/Gui/Vehicle.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Button.js,
+		src: Resources/Gui/Button.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Car.js,
+		src: Resources/Gui/Car.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Pedestrian.js,
+		src: Resources/Gui/Pedestrian.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Road.js,
+		src: Resources/Gui/Road.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: TextLabel.js,
+		src: Resources/Gui/TextLabel.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: app.js,
+		src: app.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Loader.js,
+		src: Loader.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: p5.js,
+		src: p5.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: sketch.js,
+		src: sketch.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Game.js,
+		src: Handlers/Game.js,
+		extention: .js,
+		async: true,
+		
+	},
+
+	{
+		name: StartScene.js,
+		src: Handlers/StartScene.js,
+		extention: .js,
+		async: true,
+		
+	},
+]
