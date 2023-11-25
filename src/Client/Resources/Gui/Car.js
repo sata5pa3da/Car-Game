@@ -1,23 +1,25 @@
-class Car extends Img{
+class Car extends Vehicle{
     //Static variables
     static Type = "Car";
+    static VehicleClass = "Cars";
     static CarsList = null;
     
 
     //Static methods
     static InitCarsList(){
-        Car.CarsList = {};
-
-        const Cars = GetKeysWithPrefix(ASSETS, "Cars");
-        for(const CarType of Cars){
-            const car_obj = ASSETS[CarType];
+        this.CarsList = {};
 
 
-            car_obj.loadPixels();
+        const Cars = this.GetVehicle(this.VehicleClass);
+
+        for(const CarType in Cars){
+            const car = Cars[CarType];
+            
+            car.loadPixels();
     
-            let numPixels = 4 * car_obj.width * car_obj.height;
+            let numPixels = 4 * car.width * car.height;
             const threshold = 150;
-            const pixels = car_obj.pixels;
+            const pixels = car.pixels;
             for (let i = 0; i < numPixels; i += 4) {
                 const [red, green, blue, alpha] = [pixels[i], pixels[i+1], pixels[i+2], pixels[i+3]];
 
@@ -35,15 +37,26 @@ class Car extends Img{
                 
             }
         
-            car_obj.updatePixels();
-            Car.CarsList[GetAssetName(CarType)] = car_obj;
+            car.updatePixels();
+            this.CarsList[CarType] = car;
         }
     }
 
 
     static GetCar(CarType, col){
-        if(!Car.CarsList){Car.InitCarsList()}
-        const CarClone = Car.CarsList[CarType].get();
+        if(!this.CarsList){this.InitCarsList()}
+        
+        let carPath = this.CarsList[CarType];
+        if(!carPath){
+            for(const Type in this.CarsList){
+                if(Type.includes(CarType)){
+                    carPath = this.CarsList[Type];
+                    break;
+                }
+            }
+        }
+        
+        const CarClone = carPath.get();
 
         if(col){
             CarClone.loadPixels();
@@ -75,14 +88,15 @@ class Car extends Img{
 
     //Constructor
     constructor({
-        CarType = "Car1",
+        CarType = "Car1.png",
         Color,
 
     } = {}){
         const src = Car.GetCar(CarType, Color);
         const MetaData = {};
+        
 
-        super({...arguments[0], src: src, AdditionalMetaData: MetaData, AdditionalData: {
+        super({...arguments[0], VehicleSource: src, _MetaData_Car: MetaData, _Data_Car: {
             CarType: CarType,
         }});
     }
@@ -94,14 +108,5 @@ class Car extends Img{
 
 
     //-------------------Getters/Setters-------------------------
-    get Type(){
-        return Car.Type;
-    }
-
-
-    get CarSize(){
-        const car = this.GetObject();
-        return [car.width, car.height];
-    }
     
 }

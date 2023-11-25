@@ -34,9 +34,7 @@ class Button extends TextGui{
 
 
     //-------------------Getters/Setters-------------------------
-    get Type(){
-        return Button.Type;
-    }
+    
     
     
 }

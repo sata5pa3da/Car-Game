@@ -37,9 +37,6 @@ class TextLabel extends TextGui{
 
 
     //-------------------Getters/Setters-------------------------//
-    get Type(){
-        return TextLabel.Type;
-    }
     
     
 }

@@ -78,7 +78,7 @@ class GuiObject{
     //-------------------------------------Core Methods----------------------------------------//
 
     //Called when a class that inherits from this class wants to complete their setup
-    Setup(){
+    Setup(args = {}){
         //Calling the custom setup function for the child class's object and initializing the object's methods
         const obj = this.GetObject();
 
@@ -86,6 +86,21 @@ class GuiObject{
         this.Position = this._Position;
         this.Size = this._Size;
 
+
+        //Finalizing the class's metadata and properties/data
+        for(const key in args){
+            if(key.indexOf("_MetaData") == 0){
+                const AdditionalMetaData = args[key];
+                this.MetaData = {...this.MetaData, ...AdditionalMetaData};
+            }else if(key.indexOf("_Data") == 0){
+                const AdditionalData = args[key];
+                for(const dataKey in AdditionalData){
+                    this[dataKey] = AdditionalData[dataKey];
+                }
+            }
+        }
+
+       
 
         //Setting the class and id if this is a p5 element
         const isCustomElement = this.GetMetaData("__isCustomElement");
@@ -393,6 +408,24 @@ class GuiObject{
 
         this._Visible = value;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    //
+    get Type(){
+        return this.constructor;
+    }
+
+
 
 
 }
