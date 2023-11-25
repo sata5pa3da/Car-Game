@@ -174,7 +174,6 @@ async function GameSceneSetup(env, _G){
 
     //Setup
     const LaneSize = Road.GetLaneSize();
-    console.log(LaneSize);
     Car.Resize(LaneSize);
     Update();
 }   

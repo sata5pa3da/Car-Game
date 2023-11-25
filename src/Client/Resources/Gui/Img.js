@@ -6,7 +6,6 @@ class Img extends GuiObject{
 
     //Static Methods
     static GetImage(src){
-        
         const newImage = ASSETS[src].get();
         return newImage;
     }
@@ -21,8 +20,8 @@ class Img extends GuiObject{
             scale = 1,
 
 
-            AdditionalMetaData = {},
-            AdditionalData = {},
+            // AdditionalMetaData = {},
+            // AdditionalData = {},
         } = {}){
         const args = arguments[0];
         super(arguments[0]);
@@ -49,17 +48,11 @@ class Img extends GuiObject{
             __isCustomElement: true,
             __requiresRefresh: true,
         };
-        this.MetaData = {...MetaData, ...AdditionalMetaData};
-
-
-        //Initializing any additional data
-        for(const key in AdditionalData){
-            this[key] = AdditionalData[key];
-        }
+        this.MetaData = MetaData; //{...MetaData, ...AdditionalMetaData};
 
 
         //Setting up the image
-        this.Setup();
+        this.Setup(args);
         
 
         //Settings the size of this image object to the width and height of the actual image if no size argument was passed in 
@@ -104,7 +97,6 @@ class Img extends GuiObject{
                 image(this.Img, absX, absY, absImgWidth, absImgHeight);   
                 break;
 
-
             case "Stretch":
                 image(this.Img, position.x, position.y, size.x, size.y);
                 break;
@@ -129,11 +121,6 @@ class Img extends GuiObject{
 
 
     //-------------------Getters/Setters-------------------------
-    get Type(){
-        return Img.Type;
-    }
-
-
     get ImageSize(){
         const img = this.GetObject();
         return [img.width, img.height];

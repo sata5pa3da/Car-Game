@@ -47,7 +47,7 @@ function GetKeysWithPrefix(items, prefix){
         }
     }
 
-    return keys
+    return keys;
 }
 
 function GetAssetName(path){
