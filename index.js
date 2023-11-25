@@ -25,7 +25,8 @@ const ClientScriptsOrder = [
     {src: "Resources/Gui", async: false, priority: {
         "GuiObject.js": 0,
         "TextUi.js": 1,
-        "Img.js": 2
+        "Img.js": 2,
+        "Vehicle.js": 3,
     }},
     
 
