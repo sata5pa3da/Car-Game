@@ -1,9 +1,10 @@
 class EventHandler{
-    //Static Constants
+    //---------------------Static Constants----------------------//
     static Events = [];
 
 
-    //Static Methods (Event Binding) 
+
+    //--------------------Static Methods (Event Binding)--------------------//
     static keyPressed(keys, callback, caseSensitive = false){
         return new EventHandler({
             Type: "keyPressed",
@@ -16,8 +17,31 @@ class EventHandler{
         });
     }
 
+    static keyIsDown(keys, requiresAll = false){
+        keys = typeof(keys) != "object" ? [keys] : keys;
+        let wasDown = false;
+        
+        for(let key of keys){
+            key = typeof(key) == "string" ? key.toUpperCase().charCodeAt() : key;
+            const isDown = keyIsDown(key);
+           
 
-    //Static Methods (Global Event Methods)
+            if(!wasDown && isDown){wasDown = true}
+
+            if(isDown && !requiresAll){
+                return true;
+            }else if(!isDown && requiresAll){
+                return false;
+            }
+
+        }
+
+        return wasDown;
+    }
+
+
+
+    //--------------------Static Methods (Global Event Methods)--------------------//
     static GetEventType(EventType){
         const Events = EventHandler.Events;
         const FilteredEvents = [];
@@ -31,7 +55,7 @@ class EventHandler{
         return FilteredEvents;
     }
 
-    static RemoveEvent(Event){
+    static #RemoveEvent(Event){
         const Events = EventHandler.Events;
         for(const index in Events){
             const otherEvent = Events[index];
@@ -42,7 +66,7 @@ class EventHandler{
     }
 
 
-    //Constructor
+    //--------------------Constructor--------------------//
     constructor(EventData){
         for(const key in EventData){
             this[key] = EventData[key];
@@ -62,7 +86,7 @@ class EventHandler{
     }
 
     Disconnect(){
-        EventHandler.RemoveEvent(this);
+        EventHandler.#RemoveEvent(this);
     }
 
 }

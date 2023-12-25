@@ -10,9 +10,9 @@ const StartSceneElements = [
            Id: "Label",
            Class: "StartSceneButtons",
     
-           AnchorPoint: [.5, .5],
+        //    AnchorPoint: [.5, .5],
            Position: Udim2.fromScale(.5, .5),
-           Size: Udim2.fromScale(.5, .1),
+           Size: Udim2.fromScale(.5, .25),
     
            Text: "Play", 
            TextScaled: true,
@@ -20,25 +20,26 @@ const StartSceneElements = [
     
     },
 
-    // {
-    //       //
-    //       Name: "TextLabel",
-    //       Class: TextLabel,
-    //       Tags: "StartScene",
+    {
+          //
+          Name: "TextLabel",
+          Parent: "Button2",
+          Class: TextLabel,
+          Tags: "StartScene",
       
       
-    //       Args: [{
-    //         // Id: "Label3",
-    //         Class: "trainLabel",
+          Args: [{
+            // Id: "Label3",
+            Class: "trainLabel",
 
-    //         AnchorPoint: [.5, .5],
-    //         Position: Udim2.fromScale(.5, .5),
-    //         Size: Udim2.fromScale(.5, .1),
+            // AnchorPoint: [.5, .5],
+            // Position: Udim2.fromScale(.25, .25),
+            Size: Udim2.fromScale(.75, .75),
     
-    //         Text: "Hello World", 
-    //         // TextScaled: true,
-    //       }],
-    // },
+            Text: "Hello World", 
+            TextScaled: true,
+          }],
+    },
 
     // {
     //     Name: "Road1",
@@ -149,6 +150,7 @@ const StartSceneElements = [
 
 async function StartSceneSetup(env, _G){
     const myB = app.GetElementObject("Button2");
+    // const myT = app.GetElementObject("")
     const myB_elt = myB.GetObject();
     
 

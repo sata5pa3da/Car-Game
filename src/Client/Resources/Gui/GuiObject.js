@@ -2,7 +2,7 @@ const DEFAULT_CANVAS_POSITION = {x: 0, y: 0};
 
 class GuiObject{
     //-------------------------Private Static Variables Declaration-----------------------------------//
-    #CAN_DISPLAY;
+    #CAN_DISPLAY; #Methods; #Properties; #Accessors;
 
 
     //--------------------------------Static Methods-------------------------------------//
@@ -16,7 +16,7 @@ class GuiObject{
         const canvas = GuiObject.GetCanvas();
         const canvasPosition = canvas && canvas.position();
         
-        return canvasPosition || DEFAULT_CANVAS_POSITION
+        return canvasPosition || DEFAULT_CANVAS_POSITION;
     }
 
 
@@ -34,8 +34,9 @@ class GuiObject{
         Class = "",
         Id = "",
         Setup = null,
-        Methods = {},
+        ObjectEvents = {},
         
+        Parent = null,
         AnchorPoint = [0,0],
         Position = Udim2.new(),
         Size = Udim2.new(), 
@@ -45,20 +46,23 @@ class GuiObject{
 
         //Private properties
         this.#CAN_DISPLAY = true;
-        
+        this.#Methods = undefined;
+        this.#Properties = undefined;
+        this.#Accessors = undefined;
+
 
         //Public properties
         this.Debug = Debug;
 
-
         this.Name = Name;
         this._Class = Class;
-        this._Id = Id;
         this._SetupCallback = Setup;
-        this._Methods = Methods;
+        this._ObjectEvents = ObjectEvents;
 
+        
+        this.Parent = Parent;
 
-        this._AnchorPoint = createVector(AnchorPoint[0], AnchorPoint[1]); //AnchorPoint;
+        this._AnchorPoint = createVector(...AnchorPoint); //AnchorPoint;
         
         this._Position = typeof(Position) == "function" ? Position() : Position;
         this._AbsolutePosition = {x: 0, y: 0};
@@ -86,6 +90,8 @@ class GuiObject{
         this.Position = this._Position;
         this.Size = this._Size;
 
+        
+
 
         //Finalizing the class's metadata and properties/data
         for(const key in args){
@@ -100,6 +106,32 @@ class GuiObject{
             }
         }
 
+        //Initializing the list of all the method/properties/accessors this object's class has, including the ones it inherits from
+        const Methods = this.GetClassMethods();
+        this.#Methods = Methods;
+        // console.log(this.#Methods);
+
+        const Properties = this.GetClassProperties();
+        this.#Properties = Properties;
+        // console.log(this.#Properties);
+
+        const Accessors = this.GetClassAccessors();
+        this.#Accessors = Accessors;
+        // console.log(this.#Accessors);
+
+        
+        //Looping through all Udim2 properties and adding a listener that is called when a change occurs
+        this.ForEachPropertyOfType("Udim2", (property, value) => {
+            value.onUpdate = () => {
+                this.UpdateDisplay(property == "_Size");
+            }
+        });
+
+        console.log(this);
+        const [newP, newS] = this.GetAbsoluteDimensions();
+        this.Position = newP;
+        this.Size = newS;
+        console.log(newP, newS);
        
 
         //Setting the class and id if this is a p5 element
@@ -112,17 +144,17 @@ class GuiObject{
 
 
         if(this._SetupCallback) this._SetupCallback(this, obj);
-        this.InitializeMethods();
+        this.InitializeObjectEvents();
     }
 
     //This function is responsible for looping through all the methods in the child class's object's method object and binding them to the actual object's corresponding method
-    InitializeMethods(){
-        const Methods = this._Methods;
+    InitializeObjectEvents(){
+        const ObjectEvents = this._ObjectEvents;
         const obj = this.GetObject();
 
-        for(const Method in Methods){
-            obj[Method](function(...args){
-                Methods[Method](obj, ...args);
+        for(const ObjectEvent in ObjectEvents){
+            obj[ObjectEvent](function(...args){
+                ObjectEvents[ObjectEvent](obj, ...args);
             });
         }
     }
@@ -173,7 +205,7 @@ class GuiObject{
         const elementPath = this.GetMetaData("__elementPath");
         const elementObj = StringToPath(this, elementPath);
 
-        return elementObj
+        return elementObj;
     }
 
 
@@ -203,9 +235,24 @@ class GuiObject{
             pop();
         }
     }
+
+    CustomDisplays(){
+        let Methods = this.#Methods;
+        if(!Methods){
+            Methods = this.GetClassMethods();
+            this.#Methods = Methods;
+        }
+
+        for(const Method of Methods.reverse()){
+            if(Method.indexOf("_Update") == 0){
+                this[Method]();   
+            }
+        }
+    }
+
     
-    //This function is responsible for updating the button displayed onto the screen
-    Update(sizeChanged = false){
+    //This function is responsible for updating the object displayed onto the screen
+    UpdateDisplay(sizeChanged = false){
         //Calculating the raw position and size of object
         const obj = this.GetObject();
         const posVector = this._Position.GetVector();
@@ -259,12 +306,12 @@ class GuiObject{
         
 
         //Checking if this is a custom element that has a designated method to update its display
-        if(isCustomElement){
-            const elementObj = this.GetCustomObjElement();
-            if(typeof(elementObj.UpdateDisplay) == "function"){
-                elementObj.UpdateDisplay(this._AbsolutePosition, this._AbsoluteSize, sizeChanged);
-            }
-        }
+        // if(isCustomElement){
+        //     const elementObj = this.GetCustomObjElement();
+        //     if(typeof(elementObj.UpdateDisplay) == "function"){
+        //         elementObj.UpdateDisplay(this._AbsolutePosition, this._AbsoluteSize, sizeChanged);
+        //     }
+        // }
     }
 
 
@@ -287,6 +334,151 @@ class GuiObject{
     }
 
 
+    //----------------------------------General Class Methods-------------------------------//
+
+    //Retrieves all the methods of this class including all the method it inherited from other classes
+    GetClassMethods(){
+        const Methods = GetAllPropertyNames(this, {includeEnumerables: false, includeNonenumerables:true});
+        return Methods;
+    }
+    //Loops through every method within this class and applies the callback function to it
+    ForEachMethod(callback, verifier){
+        const Methods = this.#Methods;
+        for(const method of Methods){
+            const value = this[method];
+
+            if(!verifier || verifier(method, value)){
+                callback(method, value);
+            }
+        }
+    }
+    
+
+
+    //Retrieves all the accessors(getters/setters) of this class including all the accessors it inherited from other classes
+    GetClassAccessors(){
+        const Descriptors = GetAllPropertyDescriptors(this);
+        const Accessors = FilterObject(Descriptors, (_, descriptor) => {
+            return typeof(descriptor.get) == "function" || typeof(descriptor.set) == "function";
+        });
+        
+        return Accessors;
+    }
+    //Loops through every accessor within this class and applies the callback function to it
+    ForEachAccessor(callback, verifier){
+        const Accessors = this.#Accessors;
+        for(const accessor in Accessors){
+            const value = Accessors[accessor];
+
+            if(!verifier || verifier(accessor, value)){
+                callback(accessor, value);
+            }
+        }
+    }
+    //Retrieves the getter for the specified accessor if one exist
+
+
+    //Retrieves the setter for the specified accessor if one exist
+
+
+
+
+    //Retrieves all the properties of this class including all the properties it inherited from other classes
+    GetClassProperties(){
+        const Properties = GetAllPropertyNames(this, {includeEnumerables: true, includeNonenumerables: false});
+        return Properties;
+    }
+    //Loops through every property within this class and applies the callback function to it
+    ForEachProperty(callback, verifier){
+        const Properties = this.#Properties;
+        for(const property of Properties){
+            const value = this[property];
+
+            if(!verifier || verifier(property, value)){
+                callback(property, value);
+            }
+        }
+    }
+    //Loops through every property within this class and applies the callback function to it if it is of a specific type
+    ForEachPropertyOfType(type, callback){
+        const verifier = typeof(type) == "string" && ((propType) => (propType == type)) || ((propType) => (type.includes(propType)));
+        this.ForEachProperty(callback, (property) => (verifier(this.GetPropertyType(property))));
+    }
+
+
+    //Retrieves the class type of a property within this object if the property's value is an object
+    GetPropertyType(property){
+        const value = this[property];
+        const dataType = typeof(value);
+
+        return (value == null || value == undefined) ? value : dataType != "object" ? dataType : (value.Type || dataType);
+    }
+
+    //Retrieves the class reference of a property within this object if the property's value is an object
+    GetPropertyClass(property){
+        const propType = this.GetPropertyType(property);
+        return propType && window[propType];
+    }
+
+    //Returns an Udim2 that represents a position relative to the position - size of the gui object. Ex: (.5, .5) => middle of gui.
+    GetPositionRelative(xScale, yScale, expanded = false){
+        const posVector = this._AbsolutePosition;
+        const sizeVector = this._AbsoluteSize;
+
+        const xOffset = lerp(posVector.x, posVector.x + sizeVector.x, xScale);
+        const yOffset = lerp(posVector.y, posVector.y + sizeVector.y, yScale); 
+        return Udim2.fromOffset(xOffset, yOffset);
+    }
+
+
+    //Returns an Udim2 that represents the absolute dimensions of the specified property on this object, relative to its parent's absolute dimensions
+    GetAbsoluteUdim2(property, value = undefined, parent = undefined){
+        value = value || this[property].Copy();
+        parent = parent || this.Parent;
+
+        
+        const parentValue = parent[property];
+        
+
+        return value;
+    }
+    GetAbsoluteDimensions(position = undefined, size = undefined, parent = undefined){
+        position = position || this._Position.Copy();
+        size = size || this._Size.Copy();
+        parent = parent || this.Parent;
+
+        let origin, bound;
+
+
+        if(parent != null){
+            const [parentPos, parentSize, parentAnchorPoint] = [parent._Position.Copy(), parent._Size.Copy(), parent._AnchorPoint];
+            if(parentAnchorPoint.x != 0 || parentAnchorPoint.y != 0){
+                const xScale = parentSize.x.Mult(parentAnchorPoint.x).Scale;
+                const yScale = parentSize.y.Mult(parentAnchorPoint.y).Scale;
+                parentPos.Sub(xScale, yScale);
+            }
+            
+            console.log(this._Position, parentPos, parentSize, parentAnchorPoint);
+
+
+            [origin, bound] = [parentPos, parentSize];
+            size.Mult(parentSize.x.Scale, parentSize.y.Scale);
+        }else{
+            [origin, bound] = [Udim2.zero, Udim2.one];
+        }
+
+        position.ToRelativeUdim2(origin, bound);
+
+// do while as in
+        const newParent = parent && parent.Parent;
+        if(newParent){
+            [position, size] = this.GetAbsoluteDimensions(position, size, newParent);
+        }
+
+
+        return [position, size];
+    }
+
 
     //----------------------------------Tweening Methods------------------------------------//
     CreateTween(value, goal, duration, easing_style, name){
@@ -306,7 +498,7 @@ class GuiObject{
             const This = this;
             return Tween.addMotions(motions, duration, easing_style)
                 .bindToUpdate("__Update", (tween, dt) => {
-                    This.Update(value == This._Size ? true : false);
+                    This.UpdateDisplay(value == This._Size ? true : false);
                     
                     if(This.GetMetaData("__requiresRefresh")){
                         This.Display();
@@ -367,7 +559,7 @@ class GuiObject{
     set Position(value = Udim2.half){
         // console.log("Before:", this.AbsolutePosition);
         this._Position = value;
-        this.Update();
+        this.UpdateDisplay();
         // console.log("After:", this.AbsolutePosition);
     }
 
@@ -380,7 +572,7 @@ class GuiObject{
     set Size(value = Udim2.half){
         // console.log("Updated!");
         this._Size = value;
-        this.Update(true);
+        this.UpdateDisplay(true);
     }
 
     get Visible(){
@@ -418,7 +610,7 @@ class GuiObject{
 
     //
     get Type(){
-        return this.constructor;
+        return this.constructor.name;
     }
 
 

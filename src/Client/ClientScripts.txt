@@ -16,8 +16,8 @@
 	},
 
 	{
-		name: EventBinder.js,
-		src: Resources/Utils/EventBinder.js,
+		name: EventHandler.js,
+		src: Resources/Utils/EventHandler.js,
 		extention: .js,
 		async: false,
 		
@@ -128,8 +128,24 @@
 	},
 
 	{
+		name: Projectile.js,
+		src: Resources/Gui/Projectile.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
 		name: Road.js,
 		src: Resources/Gui/Road.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Spaceship.js,
+		src: Resources/Gui/Spaceship.js,
 		extention: .js,
 		async: false,
 		

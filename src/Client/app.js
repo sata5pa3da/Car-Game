@@ -123,7 +123,7 @@ app.RefreshDisplay = function(){
 
     app.ForEachElement((_, Element) => {
         const obj = Element.Object;
-        obj.Update(true);
+        obj.UpdateDisplay(true);
     });
 
     loop();
@@ -248,25 +248,28 @@ app.AddElement = function(...NewElements){
 }
 
 app.CreateElement = function(...Data){
-    const NewElements = [];
+    const NewElements = {};//[];
 
     for(const ElementData of Data){
         //Creating a new instance of the specified class
+        const Parent = ElementData.Parent;
+        if(Parent){
+            ElementData.Args[0].Parent = NewElements[Parent].Object;
+        }
+
         const Obj = new (ElementData.Class)(...ElementData.Args);
         const Tags = (typeof(ElementData.Tags) != "object") ? {[ElementData.Tags]: true} : ArrayToObject(ElementData.Tags, true);
 
         Obj.Name = ElementData.Name;
         
-
-        NewElements.push({
+        NewElements[ElementData.Name] = {
             Name: ElementData.Name,
             Object: Obj,
             Tags: Tags,
-
-        });
+        }
     }
 
-    app.AddElement(...NewElements);
+    Object.assign(app.uiElements, NewElements);
     return NewElements;
 }
 

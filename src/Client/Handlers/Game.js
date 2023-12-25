@@ -47,6 +47,7 @@ const GameSceneElements = [
 
         Args: [
             {
+                Visible: false,
                 Size: Udim2.fromScale(.7,1),
                 Position: Udim2.fromScale(.5, .5),
                 AnchorPoint: [.5, .5],
@@ -88,6 +89,7 @@ const GameSceneElements = [
 
                 totalScale: 0.085,
                 direction: "x",
+                
             }
         ],
 
@@ -96,8 +98,8 @@ const GameSceneElements = [
 
 
     {
-        Name: "Car",
-        Class: Car,
+        Name: "Spaceship",
+        Class: Spaceship,
         Tags: "GameScene",
     
     
@@ -108,16 +110,16 @@ const GameSceneElements = [
             },
 
 
-            Id: "Car1",
+            Id: "Ship1",
             // Class: "",
     
             AnchorPoint: [.5, 1],
             Position: Udim2.fromScale(1/4, 1),
             // Size: Udim2.fromScale(.5, .1),
-            scale: .2,
+            scale: .045,
     
             // CarType: "Car1",
-            Color: Color.fromRGB(255, 0, 0),
+            // Color: Color.fromRGB(255, 0, 0),
         }],  
     },
 
@@ -130,56 +132,43 @@ const GameSceneElements = [
 
 
 
+
+
+
 async function GameSceneSetup(env, _G){
-    const Road = app.GetElementObject("Road");
-    const Car = app.GetElementObject("Car");
+    const Spaceship = app.GetElementObject("Spaceship");
 
 
-    env.TotalLanes = Road.GetLanes();
-    env.CurrentLane = 2;
-
-    env.CanUpdate = true;
-
-
-    //Local methods
-    async function Update(direction){
-        if(!env.CanUpdate){return}
-        env.CanUpdate = false;
-
-        const newLane = direction ? constrain(env.CurrentLane + direction, 1, env.TotalLanes) : env.CurrentLane;
-        if(!direction || newLane != env.CurrentLane){
-            env.CurrentLane = newLane;
-
-            const lanePosition = Road.GetLanePosition(env.CurrentLane);
-            
-            const newPosition = Udim2.toScale(lanePosition.x, Car.AbsoluteAnchorPosition.y);
-
-            if(direction){
-                const posTween = Car.CreateTween(Car.Position, newPosition, .1, "easeInQuart");
-                await Car.WaitForTweens(posTween);
-            }else{
-                Car.Position = newPosition;
-            }
-            
-        }
-
-        env.CanUpdate = true;
-    }
+    env.Speed = 35;
+    
 
 
     //Events declaration
-    const OnLeftEvent = EventHandler.keyPressed(["a", LEFT_ARROW], (event) => {Update(-1);});
-    const OnRightEvent = EventHandler.keyPressed(["d", RIGHT_ARROW], (event) => {Update(1)});
+    // const OnLeftEvent = EventHandler.keyPressed(["a", LEFT_ARROW], (event) => {Update(-1);});
+    // const OnRightEvent = EventHandler.keyPressed(["d", RIGHT_ARROW], (event) => {Update(1)});
 
 
     //Setup
-    const LaneSize = Road.GetLaneSize();
-    Car.Resize(LaneSize);
-    Update();
-}   
+    EventHandler.keyPressed([" "], () => {
+        Spaceship.SpawnProjectile();
+    });
+
+} 
 
 async function GameSceneUpdate(env, _G){
+    let dir = 0;
+    if(EventHandler.keyIsDown(["a", LEFT_ARROW])){dir--}
+    if(EventHandler.keyIsDown(["d", RIGHT_ARROW])){dir++}
 
+    const Spaceship = app.GetElementObject("Spaceship");
+
+
+    if(dir){
+        const {AbsolutePosition, AbsoluteSize} = Spaceship;
+        const speed = (dir == -1 && Math.min(AbsolutePosition.x, env.Speed)) || Math.min(width - (AbsolutePosition.x + AbsoluteSize.x), env.Speed);
+
+        Spaceship.Position.Add(Udim2.fromOffset(dir * speed));
+    }
 }
 
 async function GameSceneCleanup(env, _G){
@@ -193,5 +182,4 @@ app.RegisterScene("GameScene", {
 
 
     ElementDatas: GameSceneElements,
-
 });

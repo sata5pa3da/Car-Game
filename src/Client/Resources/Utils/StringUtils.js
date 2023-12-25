@@ -51,8 +51,9 @@ function GetKeysWithPrefix(items, prefix){
 }
 
 function GetAssetName(path){
-    const startIndex = max(path.lastIndexOf("/") + 1, 0);
-    const endIndex = path.indexOf(".");
+    const startIndex = Math.max(path.lastIndexOf("/") + 1, 0);
+    let endIndex = path.indexOf(".");
+    endIndex = endIndex == -1 ? undefined : endIndex;
 
     return path.substring(startIndex, endIndex);
 }

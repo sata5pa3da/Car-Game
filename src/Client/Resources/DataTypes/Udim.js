@@ -4,7 +4,12 @@ class Udim{
         // console.log(args);
         if(arguments.length == 1){ //An Udim object was passed as argument
             const obj = arguments[0];
-            return [obj.Scale, obj.Offset];
+            if(typeof(obj) == "object"){
+                return [obj.Scale, obj.Offset];
+            }else{ //Only scale was provided as argument
+                return [obj, 0];
+            }
+            
         }else{ //Raw arguments passed
             return [arguments[0], arguments[1]];
         }
@@ -30,6 +35,8 @@ class Udim{
 
         this.Scale += Scale;
         this.Offset += Offset;
+
+        return this;
     }
     
     Sub(...args){
@@ -37,6 +44,8 @@ class Udim{
 
         this.Scale -= Scale;
         this.Offset -= Offset;
+
+        return this;
     }
 
     Mult(...args){
@@ -44,6 +53,8 @@ class Udim{
 
         this.Scale *= Scale;
         this.Offset *= Offset || Scale;
+
+        return this;
     }
 
     Div(...args){
@@ -51,5 +62,7 @@ class Udim{
 
         this.Scale /= Scale;
         this.Offset /= Offset || Scale;
+
+        return this;
     }
 }

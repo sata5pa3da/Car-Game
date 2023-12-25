@@ -23,7 +23,6 @@ class Car extends Vehicle{
             for (let i = 0; i < numPixels; i += 4) {
                 const [red, green, blue, alpha] = [pixels[i], pixels[i+1], pixels[i+2], pixels[i+3]];
 
-                
                 if(red >= threshold || green >= threshold || blue >= threshold){
                     // Red.
                     pixels[i] = 255;
@@ -34,9 +33,8 @@ class Car extends Vehicle{
                     // Alpha.
                     pixels[i + 3] = 255;
                 }
-                
             }
-        
+
             car.updatePixels();
             this.CarsList[CarType] = car;
         }
@@ -96,7 +94,7 @@ class Car extends Vehicle{
         const MetaData = {};
         
 
-        super({...arguments[0], VehicleSource: src, _MetaData_Car: MetaData, _Data_Car: {
+        super({...arguments[0], VehicleName: CarType, VehicleSource: src, _MetaData_Car: MetaData, _Data_Car: {
             CarType: CarType,
         }});
     }

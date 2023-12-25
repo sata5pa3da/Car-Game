@@ -92,6 +92,11 @@ async function draw(){
     }else if(scene_status == "Update"){
         background(app.displaySettings.Background.Value);
 
+        if(Scene && Scene.Update){
+            await Scene.Update(env, env["_G"]);
+        }else{
+            noLoop();
+        }
 
         const Elements = app.GetElement();
         for(const key in Elements){
@@ -101,6 +106,7 @@ async function draw(){
             const requiresRefresh = obj.GetMetaData("__requiresRefresh");
 
             obj.DefaultDisplay();
+            obj.CustomDisplays();
             if(requiresRefresh){
                 const elementPath = obj.GetMetaData("__elementPath");
                 if(elementPath){
@@ -111,12 +117,7 @@ async function draw(){
                 }
                 
             }
-        }
-
-        if(Scene && Scene.Update){
-            await Scene.Update(env, env["_G"]);
-        }else{
-            noLoop();
+  
         }
         
     }
