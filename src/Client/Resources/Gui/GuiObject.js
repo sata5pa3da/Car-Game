@@ -127,11 +127,11 @@ class GuiObject{
             }
         });
 
-        console.log(this);
-        const [newP, newS] = this.GetAbsoluteDimensions();
-        this.Position = newP;
-        this.Size = newS;
-        console.log(newP, newS);
+        // console.log(this);
+        // const [newP, newS] = this.GetAbsoluteDimensions();
+        // this.Position = newP;
+        // this.Size = newS;
+        // console.log(newP, newS);
        
 
         //Setting the class and id if this is a p5 element
@@ -255,8 +255,9 @@ class GuiObject{
     UpdateDisplay(sizeChanged = false){
         //Calculating the raw position and size of object
         const obj = this.GetObject();
-        const posVector = this._Position.GetVector();
-        const sizeVector = this._Size.GetVector();
+        const [Position, Size] = this.GetAbsoluteDimensions();
+        const posVector = Position.GetVector();
+        const sizeVector = Size.GetVector();
 
 
         const canvasPosition = GuiObject.GetCanvasPosition();
@@ -447,8 +448,6 @@ class GuiObject{
         size = size || this._Size.Copy();
         parent = parent || this.Parent;
 
-        let origin, bound;
-
 
         if(parent != null){
             const [parentPos, parentSize, parentAnchorPoint] = [parent._Position.Copy(), parent._Size.Copy(), parent._AnchorPoint];
@@ -458,18 +457,18 @@ class GuiObject{
                 parentPos.Sub(xScale, yScale);
             }
             
-            console.log(this._Position, parentPos, parentSize, parentAnchorPoint);
 
-
-            [origin, bound] = [parentPos, parentSize];
+            console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
             size.Mult(parentSize.x.Scale, parentSize.y.Scale);
-        }else{
-            [origin, bound] = [Udim2.zero, Udim2.one];
+            console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
+            
+            const [origin, bound] = [parentPos, parentSize];
+            position.ToRelativeUdim2(origin, bound);
+
+            
         }
+        
 
-        position.ToRelativeUdim2(origin, bound);
-
-// do while as in
         const newParent = parent && parent.Parent;
         if(newParent){
             [position, size] = this.GetAbsoluteDimensions(position, size, newParent);

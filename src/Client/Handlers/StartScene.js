@@ -10,11 +10,11 @@ const StartSceneElements = [
            Id: "Label",
            Class: "StartSceneButtons",
     
-        //    AnchorPoint: [.5, .5],
-           Position: Udim2.fromScale(.5, .5),
-           Size: Udim2.fromScale(.5, .25),
+          //  AnchorPoint: [.5, .5],
+          //  Position: Udim2.fromScale(.5, .5),
+           Size: Udim2.fromScale(.5, .5),
     
-           Text: "Play", 
+        //    Text: "Play", 
            TextScaled: true,
         }],
     
@@ -32,14 +32,56 @@ const StartSceneElements = [
             // Id: "Label3",
             Class: "trainLabel",
 
-            // AnchorPoint: [.5, .5],
-            // Position: Udim2.fromScale(.25, .25),
+            AnchorPoint: [.5, .5],
+            Position: Udim2.fromScale(.5, .5),
             Size: Udim2.fromScale(.75, .75),
     
-            Text: "Hello World", 
+            // Text: "Hello World", 
             TextScaled: true,
           }],
     },
+
+    {
+          //
+          Name: "Text",
+          Parent: "TextLabel",
+          Class: TextLabel,
+          Tags: "StartScene",
+      
+      
+          Args: [{
+            // Id: "Label3",
+            Class: "trainLabel",
+
+            // AnchorPoint: [.5, .5],
+            Position: Udim2.fromScale(.5, .5),
+            Size: Udim2.fromScale(.5, .5),
+    
+            // Text: "Bye!", 
+            TextScaled: true,
+          }],
+    },
+
+    {
+        //
+        Name: "Object",
+        Parent: "Text",
+        Class: TextLabel,
+        Tags: "StartScene",
+    
+    
+        Args: [{
+          // Id: "Label3",
+          Class: "trainLabel",
+
+          // AnchorPoint: [.5, .5],
+          Position: Udim2.fromScale(.5, .5),
+          Size: Udim2.fromScale(.5, .5),
+  
+        //   Text: "Bye!", 
+          TextScaled: true,
+        }],
+  },
 
     // {
     //     Name: "Road1",
@@ -149,6 +191,30 @@ const StartSceneElements = [
 ];
 
 async function StartSceneSetup(env, _G){
+    // const datas = [];
+
+    // app.ForEachElement((name, _, object) => {
+    //     console.log(object);
+    //     const [newP, newS] = object.GetAbsoluteDimensions();
+        
+    //     datas.push({
+    //         object: object,
+    //         pos: newP,
+    //         size: newS,
+    //     });
+        
+        
+    //     console.log(newP, newS);
+    // });
+
+    // for(const data of datas){
+    //     const {object, pos, size} = data;
+    //     object.Position = pos;
+    //     object.Size = size;
+    // }
+
+
+
     const myB = app.GetElementObject("Button2");
     // const myT = app.GetElementObject("")
     const myB_elt = myB.GetObject();
@@ -169,6 +235,9 @@ async function StartSceneSetup(env, _G){
         app.RemoveElement(myB.Name);
         app.SetScene("GameScene");
     }));
+
+    // await wait(2);
+    // myB.Position.Mult(0,0);
 }
 
 async function StartSceneUpdate(){

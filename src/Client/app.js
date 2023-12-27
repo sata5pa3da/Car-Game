@@ -296,12 +296,13 @@ app.ForEachElement = function(callback, isSync = true){
 
     const Elements = app.GetElement();
     for(const ElementName in Elements){
+        const Element = Elements[ElementName];
         if(isSync){
-            callback(ElementName, Elements[ElementName]);
+            callback(ElementName, Element, Element.Object);
         }else{
             PendingLoops++;
             new Promise(() => {
-                callback(ElementName, Elements[ElementName]);
+                callback(ElementName, Element, Element.Object);
 
                 PendingLoops--;
                 if(PendingLoops <= 0){
