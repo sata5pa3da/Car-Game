@@ -22,7 +22,7 @@ Button, p{
 
   background-color: rgba(100,100,100,0);
 
-  border-radius: 5px;
+  /* border-radius: 5px; */
   border-color: cyan;
 
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -47,7 +47,7 @@ Button, p{
 
   background-color: rgba(100,100,100,0);
 
-  border-radius: 5px;
+  /* border-radius: 5px; */
   border-color: cyan;
 
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -66,7 +66,7 @@ Button, p{
 
   background-color: rgba(100,100,100,0);
 
-  border-radius: 5px;
+  /* border-radius: 5px; */
   border-color: cyan;
 
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;

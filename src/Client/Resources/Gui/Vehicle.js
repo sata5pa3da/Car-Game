@@ -66,13 +66,14 @@ class Vehicle extends Img{
             VehicleType: VehicleType,
             VehicleName: VehicleName,
             VehicleId: GetAssetName(VehicleName),
+
+            Acceleration: Acceleration || createVector(0,0),
+            Velocity: Velocity || createVector(0,0),
         }});
 
 
-
-        //
-        this.Acceleration = Acceleration || createVector(0,0);
-        this.Velocity = Velocity || createVector(0,0);
+        // this.Acceleration = Acceleration || createVector(0,0);
+        // this.Velocity = Velocity || createVector(0,0);
     }
 
 

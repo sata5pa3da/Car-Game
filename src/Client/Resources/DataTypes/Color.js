@@ -4,10 +4,13 @@ class Color{
         return new Color(red, green, blue);
     }
 
-    static fromRGB(red = 0, green = 0, blue = 0){
-        red = red / 255;
-        green = green / 255;
-        blue = blue / 255;
+    static fromRGB(red = 0, green, blue){
+        if(typeof(green) != "number"){green = red}
+        if(typeof(blue) != "number"){blue = red}
+        
+        red /= 255;
+        green /= 255;
+        blue /= 255;
 
         return new Color(red, green, blue);
     }
@@ -15,10 +18,12 @@ class Color{
 
 
     //---------------------Constructor----------------------//
-    constructor(red, green, blue){
+    constructor(red = 0, green, blue){
+        if(typeof(green) != "number"){green = red}
+        if(typeof(blue) != "number"){blue = red}
+
         this.R = red, this.G = green, this.B = blue;
         this._Value = undefined;
-
     }
 
 

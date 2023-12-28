@@ -24,7 +24,7 @@ class Img extends GuiObject{
             // AdditionalData = {},
         } = {}){
         const args = arguments[0];
-        super(arguments[0]);
+        super(args);
 
 
         //Initializing the properties specific to the image itself
@@ -52,7 +52,7 @@ class Img extends GuiObject{
 
 
         //Setting up the image
-        this.Setup(args);
+        this.Setup();
         
 
         //Settings the size of this image object to the width and height of the actual image if no size argument was passed in 

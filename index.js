@@ -11,15 +11,16 @@ const app = express();
 //Constants
 const ClientDirectory = "src/Client";
 const ClientScriptsOrder = [
+    {src: "Resources/DataTypes", async: false, priority: {
+        "Udim.js": 0,
+        "Udim2.js": 1,
+        "Color.js": 2,
+    }},
+
     {src: "Resources/Utils", async: false, priority: {
         "wait.js": 0,
         "Tween.js": 1,
         "EventHandler.js": 2,
-    }},
-
-    {src: "Resources/DataTypes", async: false, priority: {
-        "Udim.js": 0,
-        "Udim2.js": 1,
     }},
 
     {src: "Resources/Gui", async: false, priority: {
@@ -113,17 +114,27 @@ async function GetClientScripts(ClientScripts = []){
 
                     if(DataObject.extention == ".js"){
                         let objPriority = priority && priority[DataObject.name];
+                        // if(DataObject.name == "EventHandler.js"){
+                        //     console.log(DataObject, DirectoryScripts);
+                        // }
+                        
 
                         //Checking if this script object has a specified priority number. If not, it is simply added to the end of the list
                         if(objPriority != undefined){
                             for(let i = objPriority-1; i >= 0; i--){
                                 const curObject = DirectoryScripts[i];
+                                // if(DataObject.name == "EventHandler.js"){
+                                //     console.log(i, curObject, DirectoryScripts);
+                                // }
                                 
-                                if(typeof(priority[curObject.name]) != "number" || priority[curObject.name] > priority[DataObject.name]){
-                                    objPriority --;
-                                }else{
-                                    break;
-                                }
+                                
+                                if(curObject){
+                                    if((typeof(priority[curObject.name]) != "number" || priority[curObject.name] > priority[DataObject.name])){
+                                        objPriority = i;
+                                    }else{
+                                        break;
+                                    }
+                                }   
                             }
 
                             DirectoryScripts.splice(objPriority, 0, DataObject);

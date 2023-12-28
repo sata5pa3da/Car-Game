@@ -40,8 +40,10 @@ class GuiObject{
         AnchorPoint = [0,0],
         Position = Udim2.new(),
         Size = Udim2.new(), 
-        Visible,} = {}){
-        
+        Visible,
+    } = {}){
+        //Arguments storing
+        this._args = arguments[0];
         
 
         //Private properties
@@ -82,8 +84,13 @@ class GuiObject{
     //-------------------------------------Core Methods----------------------------------------//
 
     //Called when a class that inherits from this class wants to complete their setup
-    Setup(args = {}){
-        //Calling the custom setup function for the child class's object and initializing the object's methods
+    Setup(){
+        //Retrieving the arguments used to initialize this class
+        const args = this._args;
+        delete this._args;
+        
+
+        //Activating the properties that needs activations
         const obj = this.GetObject();
 
 
@@ -105,6 +112,7 @@ class GuiObject{
                 }
             }
         }
+
 
         //Initializing the list of all the method/properties/accessors this object's class has, including the ones it inherits from
         const Methods = this.GetClassMethods();
@@ -437,7 +445,6 @@ class GuiObject{
         value = value || this[property].Copy();
         parent = parent || this.Parent;
 
-        
         const parentValue = parent[property];
         
 
@@ -452,15 +459,47 @@ class GuiObject{
         if(parent != null){
             const [parentPos, parentSize, parentAnchorPoint] = [parent._Position.Copy(), parent._Size.Copy(), parent._AnchorPoint];
             if(parentAnchorPoint.x != 0 || parentAnchorPoint.y != 0){
-                const xScale = parentSize.x.Mult(parentAnchorPoint.x).Scale;
-                const yScale = parentSize.y.Mult(parentAnchorPoint.y).Scale;
+                const xScale = parentSize.x.Scale * parentAnchorPoint.x;
+                const yScale = parentSize.y.Scale * parentAnchorPoint.y;
                 parentPos.Sub(xScale, yScale);
             }
             
+            const topLeft = {
+                //
+                Name: "TopLeft",
+                // Parent: "Text",
+                Class: Debugger,
+                Tags: "StartScene",
+            
+            
+                Args: [{
+                  Color: Color.fromRGB(255),
 
-            console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
+                  Scale: 3,
+                  Position: parentPos.Copy(),
+                }],
+            }
+
+            const bottomRight = {
+                //
+                Name: "BottomRight",
+                // Parent: "Text",
+                Class: Debugger,
+                Tags: "StartScene",
+            
+            
+                Args: [{
+                  Color: Color.fromRGB(255),
+
+                  Scale: 3,
+                  Position: parentPos.Copy().Add(parentSize),
+                }],
+            }
+
+            app.CreateElement(topLeft, bottomRight);
+            // console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
             size.Mult(parentSize.x.Scale, parentSize.y.Scale);
-            console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
+            // console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
             
             const [origin, bound] = [parentPos, parentSize];
             position.ToRelativeUdim2(origin, bound);
@@ -469,7 +508,7 @@ class GuiObject{
         }
         
 
-        const newParent = parent && parent.Parent;
+        const newParent = parent ? parent.Parent : undefined;
         if(newParent){
             [position, size] = this.GetAbsoluteDimensions(position, size, newParent);
         }

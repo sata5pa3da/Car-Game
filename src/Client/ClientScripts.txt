@@ -1,5 +1,29 @@
 [
 	{
+		name: Udim.js,
+		src: Resources/DataTypes/Udim.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Udim2.js,
+		src: Resources/DataTypes/Udim2.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: Color.js,
+		src: Resources/DataTypes/Color.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
 		name: wait.js,
 		src: Resources/Utils/wait.js,
 		extention: .js,
@@ -32,14 +56,6 @@
 	},
 
 	{
-		name: ColorUtils.js,
-		src: Resources/Utils/ColorUtils.js,
-		extention: .js,
-		async: false,
-		
-	},
-
-	{
 		name: StringUtils.js,
 		src: Resources/Utils/StringUtils.js,
 		extention: .js,
@@ -50,22 +66,6 @@
 	{
 		name: Typewriter.js,
 		src: Resources/Utils/Typewriter.js,
-		extention: .js,
-		async: false,
-		
-	},
-
-	{
-		name: Udim.js,
-		src: Resources/DataTypes/Udim.js,
-		extention: .js,
-		async: false,
-		
-	},
-
-	{
-		name: Udim2.js,
-		src: Resources/DataTypes/Udim2.js,
 		extention: .js,
 		async: false,
 		
@@ -114,6 +114,14 @@
 	{
 		name: Car.js,
 		src: Resources/Gui/Car.js,
+		extention: .js,
+		async: false,
+		
+	},
+
+	{
+		name: DebugUI.js,
+		src: Resources/Gui/DebugUI.js,
 		extention: .js,
 		async: false,
 		

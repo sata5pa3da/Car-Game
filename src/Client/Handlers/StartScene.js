@@ -10,8 +10,8 @@ const StartSceneElements = [
            Id: "Label",
            Class: "StartSceneButtons",
     
-          //  AnchorPoint: [.5, .5],
-          //  Position: Udim2.fromScale(.5, .5),
+           AnchorPoint: [.5, .5],
+           Position: Udim2.fromScale(.5, .5),
            Size: Udim2.fromScale(.5, .5),
     
         //    Text: "Play", 
@@ -53,7 +53,7 @@ const StartSceneElements = [
             // Id: "Label3",
             Class: "trainLabel",
 
-            // AnchorPoint: [.5, .5],
+            AnchorPoint: [.5, .5],
             Position: Udim2.fromScale(.5, .5),
             Size: Udim2.fromScale(.5, .5),
     
@@ -81,9 +81,16 @@ const StartSceneElements = [
         //   Text: "Bye!", 
           TextScaled: true,
         }],
-  },
+    },
 
-    // {
+    
+  
+  
+  
+  
+  
+  
+  // {
     //     Name: "Road1",
     //     Class: Road,
     //     Tags: "Roads",
