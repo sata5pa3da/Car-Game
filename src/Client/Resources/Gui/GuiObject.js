@@ -2,7 +2,7 @@ const DEFAULT_CANVAS_POSITION = {x: 0, y: 0};
 
 class GuiObject{
     //-------------------------Private Static Variables Declaration-----------------------------------//
-    #CAN_DISPLAY; #Methods; #Properties; #Accessors;
+    #CAN_DISPLAY; #Methods; #Properties; #Accessors; #UniqueId;
 
 
     //--------------------------------Static Methods-------------------------------------//
@@ -40,17 +40,22 @@ class GuiObject{
         AnchorPoint = [0,0],
         Position = Udim2.new(),
         Size = Udim2.new(), 
-        Visible,
+        Visible = true,
     } = {}){
         //Arguments storing
         this._args = arguments[0];
         
 
         //Private properties
+        this.#UniqueId = GenerateUniqueId();
         this.#CAN_DISPLAY = true;
+
         this.#Methods = undefined;
         this.#Properties = undefined;
         this.#Accessors = undefined;
+
+        
+
 
 
         //Public properties
@@ -58,11 +63,13 @@ class GuiObject{
 
         this.Name = Name;
         this._Class = Class;
+        this._Id = Id;
         this._SetupCallback = Setup;
         this._ObjectEvents = ObjectEvents;
 
         
-        this.Parent = Parent;
+        this._Parent = Parent;
+        this._Children = [];
 
         this._AnchorPoint = createVector(...AnchorPoint); //AnchorPoint;
         
@@ -135,12 +142,6 @@ class GuiObject{
             }
         });
 
-        // console.log(this);
-        // const [newP, newS] = this.GetAbsoluteDimensions();
-        // this.Position = newP;
-        // this.Size = newS;
-        // console.log(newP, newS);
-       
 
         //Setting the class and id if this is a p5 element
         const isCustomElement = this.GetMetaData("__isCustomElement");
@@ -150,6 +151,15 @@ class GuiObject{
         }
         
 
+        //Storing this object in the appropriate container
+        const Parent = this.Parent;
+
+        if(Parent instanceof EngineInstance){
+            Parent.RegisterObjects(this);
+        }else if(Parent){
+            Parent.Children.push(this);
+        }
+        
 
         if(this._SetupCallback) this._SetupCallback(this, obj);
         this.InitializeObjectEvents();
@@ -176,7 +186,7 @@ class GuiObject{
         return property ? MetaData[property] : MetaData;
     }
 
-    //Returns the actual Gui object
+    //Returns the actual Gui object (the p5 element wrapper)
     GetObject(){
         const MetaData = this.GetMetaData();
         const obj = MetaData.__object;
@@ -184,7 +194,7 @@ class GuiObject{
         return obj;
     }
 
-    //Returns the raw element of the object (if the object is a p5 wrapper)
+    //Returns the raw element of the object (if the object is a p5 element wrapper)
     GetObjectElement(){
         const obj = this.GetObject();
         return obj.elt;
@@ -263,7 +273,7 @@ class GuiObject{
     UpdateDisplay(sizeChanged = false){
         //Calculating the raw position and size of object
         const obj = this.GetObject();
-        const [Position, Size] = this.GetAbsoluteDimensions();
+        const [Position, Size] = this.GetAbsoluteDimensions(); //this.GetAbsoluteDimensions(...(dimensions || [undefined, undefined]), baseParent);
         const posVector = Position.GetVector();
         const sizeVector = Size.GetVector();
 
@@ -311,6 +321,11 @@ class GuiObject{
                 }
             }
             
+        }
+
+        // baseParent = baseParent ? baseParent : this.GetBaseParent();
+        for(const child of this._Children){
+            child.UpdateDisplay(sizeChanged);
         }
         
 
@@ -440,63 +455,24 @@ class GuiObject{
     }
 
 
-    //Returns an Udim2 that represents the absolute dimensions of the specified property on this object, relative to its parent's absolute dimensions
-    GetAbsoluteUdim2(property, value = undefined, parent = undefined){
-        value = value || this[property].Copy();
-        parent = parent || this.Parent;
-
-        const parentValue = parent[property];
-        
-
-        return value;
-    }
+    //Returns an Udim2 that represents the absolute dimensions of the size and position of this object, relative to its parent's absolute dimensions
     GetAbsoluteDimensions(position = undefined, size = undefined, parent = undefined){
         position = position || this._Position.Copy();
         size = size || this._Size.Copy();
         parent = parent || this.Parent;
 
 
+        let parentPos, parentSize, parentAnchorPoint;
         if(parent != null){
-            const [parentPos, parentSize, parentAnchorPoint] = [parent._Position.Copy(), parent._Size.Copy(), parent._AnchorPoint];
-            if(parentAnchorPoint.x != 0 || parentAnchorPoint.y != 0){
+            [parentPos, parentSize, parentAnchorPoint] = [parent._Position.Copy(), parent._Size.Copy(), parent._AnchorPoint];
+            if((parentAnchorPoint.x != 0 || parentAnchorPoint.y != 0)){
                 const xScale = parentSize.x.Scale * parentAnchorPoint.x;
                 const yScale = parentSize.y.Scale * parentAnchorPoint.y;
                 parentPos.Sub(xScale, yScale);
             }
             
-            const topLeft = {
-                //
-                Name: "TopLeft",
-                // Parent: "Text",
-                Class: Debugger,
-                Tags: "StartScene",
             
             
-                Args: [{
-                  Color: Color.fromRGB(255),
-
-                  Scale: 3,
-                  Position: parentPos.Copy(),
-                }],
-            }
-
-            const bottomRight = {
-                //
-                Name: "BottomRight",
-                // Parent: "Text",
-                Class: Debugger,
-                Tags: "StartScene",
-            
-            
-                Args: [{
-                  Color: Color.fromRGB(255),
-
-                  Scale: 3,
-                  Position: parentPos.Copy().Add(parentSize),
-                }],
-            }
-
-            app.CreateElement(topLeft, bottomRight);
             // console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
             size.Mult(parentSize.x.Scale, parentSize.y.Scale);
             // console.log(size.x.Scale + "," + size.y.Scale + " | " + parentSize.x.Scale + "," + parentSize.y.Scale);
@@ -513,8 +489,60 @@ class GuiObject{
             [position, size] = this.GetAbsoluteDimensions(position, size, newParent);
         }
 
+        
+
+        if(false){
+            const topLeft = {
+                //
+                Name: "TopLeft" + GenerateUniqueId(),
+                // Parent: "Text",
+                Class: Debugger,
+                Tags: "StartScene",
+            
+            
+                Args: [{
+                  Color: Color.fromRGB(255),
+    
+                  Scale: 3,
+                  Position: parentPos.Copy(),
+                }],
+            }
+    
+            const bottomRight = {
+                //
+                Name: "BottomRight" + GenerateUniqueId(),
+                // Parent: "Text",
+                Class: Debugger,
+                Tags: "StartScene",
+            
+            
+                Args: [{
+                  Color: Color.fromRGB(255),
+    
+                  Scale: 3,
+                  Position: parentPos.Copy().Add(parentSize),
+                }],
+            }
+    
+            if(parentPos.x.Scale == .125){
+                console.log(parent.Name, parent);
+            }
+
+            app.CreateElement(topLeft, bottomRight);
+        }
+        
 
         return [position, size];
+    }
+
+
+    //Returns the object at the top of the heirachy within this object's parent-child heirachy
+    GetBaseParent(){
+        if(!this.Parent || !(this.Parent instanceof GuiObject)){
+            return this;
+        }else{
+            return this.Parent.GetBaseParent();
+        }
     }
 
 
@@ -560,9 +588,43 @@ class GuiObject{
     get CanDisplay(){
         return this.#CAN_DISPLAY;
     }
+    set CanDisplay(value){
+        if(typeof(value) != "boolean" || value == this.#CAN_DISPLAY){return}
+        this.#CAN_DISPLAY = value;
+
+
+        if(!this.GetMetaData("__isCustomElement")){
+            const element = this.GetObject();
+
+            if(!this.#CAN_DISPLAY){
+                element.hide();
+            }else{
+                element.show();
+            }
+        }   
+    }
 
 
     //-----------------------Getters/Setters-----------------------//
+    get Parent(){
+        return this._Parent;
+    }
+    set Parent(value){
+        this._Parent = value;
+
+        if(!this._Parent){
+            this.CanDisplay = false;
+        }
+    }
+
+    get Children(){
+        return this._Children;
+    }
+    set Children(_){
+
+    }
+
+
     get Class(){
         return this._Class;
     }

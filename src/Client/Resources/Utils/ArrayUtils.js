@@ -14,20 +14,20 @@ function FilterObject(object, filter){
 
 
 
-function ArrayToObject(array, value, object, key){
+function ArrayToObject(array, key, object, value){
     object = typeof(object) == "object" ? object : {};
 
 
     for(const index in array){
         const val = array[index];
-
+        
 
         const [keyType,  valueType] = [typeof(key), typeof(value)];
 
-        key = (keyType == "function") ? (key(index, val)) :  key;
-        value = (valueType == "function") ? value(index, val) : value;
+        objKey = (keyType == "function") ? (key(index, val)) :  val[key];
+        objValue = (valueType == "function") ? value(index, val) : value;
 
-        object[key || val] = value || val;
+        object[objKey || val] = objValue || val;
     }
 
     return object;

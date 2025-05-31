@@ -11,19 +11,19 @@ const app = express();
 //Constants
 const ClientDirectory = "src/Client";
 const ClientScriptsOrder = [
-    {src: "Resources/DataTypes", async: false, priority: {
+    {src: "Resources/DataTypes", priority: {
         "Udim.js": 0,
         "Udim2.js": 1,
         "Color.js": 2,
     }},
 
-    {src: "Resources/Utils", async: false, priority: {
+    {src: "Resources/Utils", priority: {
         "wait.js": 0,
         "Tween.js": 1,
         "EventHandler.js": 2,
     }},
 
-    {src: "Resources/Gui", async: false, priority: {
+    {src: "Resources/Gui", priority: {
         "GuiObject.js": 0,
         "TextUi.js": 1,
         "Img.js": 2,
@@ -32,9 +32,11 @@ const ClientScriptsOrder = [
     
 
 
-    {src: "", recursive: false, priority: {
+    {src: "Engine", priority: {}},
+
+    {src: "Core", priority: {
         "app.js": 0,
-    }, async: false},
+    },},
 
     {src: "Handlers"},
 ]
@@ -92,7 +94,7 @@ async function GetClientScripts(ClientScripts = []){
             const priority = DirSettings.priority;
             
             const recursive = typeof(DirSettings.recursive) == "boolean" ? DirSettings.recursive : true;
-            const asynchronous = typeof(DirSettings.async) == "boolean" ? DirSettings.async : true;
+            const asynchronous = typeof(DirSettings.async) == "boolean" ? DirSettings.async : false;
 
 
             const directory = `/${ClientDirectory}/` + src;
@@ -162,7 +164,7 @@ async function GetClientScripts(ClientScripts = []){
 
 async function UpdateFile(data){
     try{
-        const path = `/${ClientDirectory}/ClientScripts.txt`;
+        const path = `/${ClientDirectory}/Core/ClientScripts.txt`;
 
         // let content = await fs.readFile(GetPath(path), { encoding: 'utf8' });
 

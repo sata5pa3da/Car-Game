@@ -19,20 +19,20 @@
     }
 
 
-    static fromScale = function(xScale, yScale){
+    static fromScale = function(xScale = 0, yScale = 0){
         return new Udim2(xScale, 0, yScale, 0);
     }
 
-    static toScale = function(xOffset, yOffset){
+    static toScale = function(xOffset = 0, yOffset = 0){
         return Udim2.fromScale(xOffset/width, yOffset/height);
     }
 
 
-    static fromOffset = function(xOffset, yOffset){
+    static fromOffset = function(xOffset = 0, yOffset = 0){
         return new Udim2(0, xOffset, 0, yOffset);
     }
 
-    static toOffset = function(xScale, yScale){
+    static toOffset = function(xScale = 0, yScale = 0){
         return Udim2.fromOffset(xScale * width, yScale * height);
     }
 

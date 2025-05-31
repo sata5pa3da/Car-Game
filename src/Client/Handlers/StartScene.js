@@ -10,7 +10,7 @@ const StartSceneElements = [
            Id: "Label",
            Class: "StartSceneButtons",
     
-           AnchorPoint: [.5, .5],
+          //  AnchorPoint: [.5, .5],
            Position: Udim2.fromScale(.5, .5),
            Size: Udim2.fromScale(.5, .5),
     
@@ -235,13 +235,15 @@ async function StartSceneSetup(env, _G){
 
         const buttonPos = myB_elt.position();
         // const customArr = {x: {x: {x: buttonPos.x}}, y:0};
-        const posTween = myB.CreateTween(myB.Position, Udim2.fromScale(myB.Position.x.Scale, -myB.Size.y.Scale*2), .25, "easeInQuart");
-        const sizeTween = myB.CreateTween(myB.Size, Udim2.zero, .25, "easeInQuart");
+        // const posTween = myB.CreateTween(myB.Position, Udim2.fromScale(myB.Position.x.Scale, -myB.Size.y.Scale*2), .25, "easeInQuart");
+        const posTween = myB.CreateTween(myB.Position, Udim2.zero, 10);
+        const sizeTween = myB.CreateTween(myB.Size, Udim2.zero, 10, "easeInQuart");
         
-        await myB.WaitForTweens(posTween, sizeTween);
+        await myB.WaitForTweens(posTween);
         app.RemoveElement(myB.Name);
         app.SetScene("GameScene");
     }));
+
 
     // await wait(2);
     // myB.Position.Mult(0,0);

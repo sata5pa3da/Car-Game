@@ -11,7 +11,7 @@ class Pedestrian extends GuiObject{
             head: {
                 scale: [1, 1],
                 offset: 0,
-                face,
+                // face,
             },
 
             root: {
@@ -70,8 +70,10 @@ class Pedestrian extends GuiObject{
 
 
     Display(){
+        // console.log(this.Visible);
+        // console.log(this.CanDisplay);
         if(!this.Visible || !this.CanDisplay){return}
-
+        // console.log("Called?");
 
         push();
         rectMode(CENTER);
