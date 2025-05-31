@@ -14,6 +14,7 @@ const ClientScriptsOrder = [
     {src: "Resources/Utils", async: false, priority: {
         "wait.js": 0,
         "Tween.js": 1,
+        "EventBinder.js": 2,
     }},
 
     {src: "Resources/DataTypes", async: false, priority: {
@@ -24,6 +25,8 @@ const ClientScriptsOrder = [
     {src: "Resources/Gui", async: false, priority: {
         "GuiObject.js": 0,
         "TextUi.js": 1,
+        "Img.js": 2,
+        "Vehicle.js": 3,
     }},
     
 
@@ -77,7 +80,6 @@ async function GetClientAssets(ClientAssets = []){
         }
     }
 
-    // console.log(ClientAssets);
     return ClientAssets;
 }
 
@@ -113,13 +115,11 @@ async function GetClientScripts(ClientScripts = []){
                         let objPriority = priority && priority[DataObject.name];
 
                         //Checking if this script object has a specified priority number. If not, it is simply added to the end of the list
-                        // console.log(DataObject.name)
                         if(objPriority != undefined){
                             for(let i = objPriority-1; i >= 0; i--){
                                 const curObject = DirectoryScripts[i];
                                 
                                 if(typeof(priority[curObject.name]) != "number" || priority[curObject.name] > priority[DataObject.name]){
-                                    // console.log(DataObject, curObject, priority[curObject.name], priority[curObject.name] > priority[DataObject.name]);
                                     objPriority --;
                                 }else{
                                     break;
@@ -150,12 +150,10 @@ async function GetClientScripts(ClientScripts = []){
 
 
 async function UpdateFile(data){
-    // console.log("...");
     try{
         const path = `/${ClientDirectory}/ClientScripts.txt`;
 
         // let content = await fs.readFile(GetPath(path), { encoding: 'utf8' });
-        // console.log(content);
 
         let fileData = "[";
         for(let obj of data){
@@ -173,11 +171,9 @@ async function UpdateFile(data){
         await fs.writeFile(GetPath(path), fileData);
         
         content = await fs.readFile(GetPath(path), { encoding: 'utf8' });
-        // console.log(content);
     }catch(err){
         console.log("Error occurred while reading file.", err);
     }
-    // console.log("Called");
 }
 
 //-------------------------------------------
@@ -194,20 +190,15 @@ app.use(express.static("src/Client"));
 
 
 
-// console.log(app);
 //Listening for get requests 
 (async () => {
-    
-
     app.get("/Data", async (req, res) => {
-        // console.log(req);
         const ClientAssets = [];
         await GetClientAssets(ClientAssets);
 
 
         const ClientScripts = [];
         await GetClientScripts(ClientScripts);
-        // console.log(ClientScripts);
 
 
         UpdateFile(ClientScripts);

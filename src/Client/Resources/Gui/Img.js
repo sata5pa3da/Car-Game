@@ -6,7 +6,6 @@ class Img extends GuiObject{
 
     //Static Methods
     static GetImage(src){
-        
         const newImage = ASSETS[src].get();
         return newImage;
     }
@@ -18,15 +17,15 @@ class Img extends GuiObject{
             alt = "",
             
             scaleType = "Fit",
+            scale = 1,
 
+
+            // AdditionalMetaData = {},
+            // AdditionalData = {},
         } = {}){
+        const args = arguments[0];
         super(arguments[0]);
 
-        
-
-        //Initializing the status variables
-        // this.Displaying = false;
-            
 
         //Initializing the properties specific to the image itself
         this.src = src;
@@ -37,7 +36,7 @@ class Img extends GuiObject{
 
 
         //Creating the image itself
-        const _Img =  Img.GetImage(this.src); //createImg(this.src, this.alt);
+        const _Img = typeof(this.src) == "string" ? Img.GetImage(this.src) : this.src;
         this.Img = _Img;
 
        
@@ -49,19 +48,23 @@ class Img extends GuiObject{
             __isCustomElement: true,
             __requiresRefresh: true,
         };
-        this.MetaData = MetaData;
-
+        this.MetaData = MetaData; //{...MetaData, ...AdditionalMetaData};
 
 
         //Setting up the image
-        this.Setup();
+        this.Setup(args);
         
 
         //Settings the size of this image object to the width and height of the actual image if no size argument was passed in 
         if(this.Size.Magnitude <= 0){
             this.Size = Udim2.toScale(this.Img.width, this.Img.height);
         }
-        
+
+        //Scaling the image to the desired scale
+        scale = typeof(scale) == "number" ? [scale] : scale;
+        this.Scale(...scale);
+
+        if(args["Visible"] != false){this.Visible = true}
     }
 
 
@@ -70,9 +73,7 @@ class Img extends GuiObject{
     Display(){
         if(!this.Visible || !this.CanDisplay){return}
         
-        
         const [position, size] = [this._AbsolutePosition, this._AbsoluteSize];
-         
         switch(this.scaleType){
             case "Fit":
                 const [imgWidth, imgHeight] = this.ImageSize;
@@ -93,28 +94,18 @@ class Img extends GuiObject{
                 
                 
 
-                image(this.Img, absX, absY, absImgWidth, absImgHeight);      
+                image(this.Img, absX, absY, absImgWidth, absImgHeight);   
                 break;
-
 
             case "Stretch":
                 image(this.Img, position.x, position.y, size.x, size.y);
                 break;
         }
-
-        // push();
-        // noFill();
-        // // fill(color(255,0,0));
-        // strokeWeight(3);
-        // stroke(color(255, 0, 0));
-
-        // rect(position.x, position.y, size.x, size.y);
-        // pop();
     }
 
     Resize(w, h){
         const obj = this.GetObject();
-        obj.resize(w, h);
+        obj.resize(w || 0, h || 0);
 
         this.Size = Udim2.toScale(obj.width, obj.height);
     }
@@ -130,11 +121,6 @@ class Img extends GuiObject{
 
 
     //-------------------Getters/Setters-------------------------
-    get Type(){
-        return Img.Type;
-    }
-
-
     get ImageSize(){
         const img = this.GetObject();
         return [img.width, img.height];

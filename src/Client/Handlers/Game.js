@@ -41,13 +41,13 @@ const GameSceneElements = [
     // },
 
     {
-        Name: "Road1",
+        Name: "Road",
         Class: Road,
         Tags: "Roads",
 
         Args: [
             {
-                Size: Udim2.fromScale(.95,1),
+                Size: Udim2.fromScale(.7,1),
                 Position: Udim2.fromScale(.5, .5),
                 AnchorPoint: [.5, .5],
 
@@ -95,78 +95,94 @@ const GameSceneElements = [
 
 
 
-    // {
-    //     Name: "Car1",
-    //     Class: Car,
-    //     Tags: "GameScene",
+    {
+        Name: "Car",
+        Class: Car,
+        Tags: "GameScene",
     
     
-    //     Args: [{
-    //        Id: "Car1",
-    //     //    Class: "",
-    
-    //        AnchorPoint: [.5, .5],
-    //        Position: Udim2.fromScale(.58, .25),
-    //        Size: Udim2.fromScale(.5, .1),
-    
-    //     //    Text: "Play", 
-    //     //    TextScaled: true,
-    //         // CarType: "Car1",
-    //         Color: Color.fromRGB(255, 0, 0),
-    //     }],  
-    // },
+        Args: [{
+            Debug: {
+                BorderColor: Color.fromRGB(255, 0, 0),
+                BorderWidth: 2,
+            },
 
-    // {
-    //     Name: "Ped1",
-    //     Class: Pedestrian,
-    //     Tags: "GameScene",
+
+            Id: "Car1",
+            // Class: "",
     
+            AnchorPoint: [.5, 1],
+            Position: Udim2.fromScale(1/4, 1),
+            // Size: Udim2.fromScale(.5, .1),
+            scale: .2,
     
-    //     Args: [{
-    //         Id: "Ped1",
-    //     //    Class: "",
-    
-    //         AnchorPoint: [.5, .5],
-    //         Position: Udim2.fromScale(.75, .5), //() => {return Udim2.toScale(100, 100)},
-    //         Size: Udim2.fromScale(.15,.5), //() => {return Udim2.toScale(100, 100)},
-    
-    //         data: {
-    //             root: {
-    //                 scale: [.35, .2],
-    //             },
+            // CarType: "Car1",
+            Color: Color.fromRGB(255, 0, 0),
+        }],  
+    },
 
-    //             head: {
-    //                 scale: [0.5, .15],
-    //                 offset: 0.01,
-    //             },
-
-    //             arms: {
-    //                 scale: [0.22, 0.4],
-    //                 offset: 0.02,
-
-    //             },
-
-    //             legs: {
-    //                 scale: [.22, .4],
-    //                 offset: 0.015,
-    //             },
-
-    //         },
-    //         Color: Color.fromRGB(255, 0, 0),
-    //     }],   
-    // },
+   
 
 ];
 
+
+
+
+
+
 async function GameSceneSetup(env, _G){
-    
-}
+    const Road = app.GetElementObject("Road");
+    const Car = app.GetElementObject("Car");
+
+
+    env.TotalLanes = Road.GetLanes();
+    env.CurrentLane = 2;
+
+    env.CanUpdate = true;
+
+
+    //Local methods
+    async function Update(direction){
+        if(!env.CanUpdate){return}
+        env.CanUpdate = false;
+
+        const newLane = direction ? constrain(env.CurrentLane + direction, 1, env.TotalLanes) : env.CurrentLane;
+        if(!direction || newLane != env.CurrentLane){
+            env.CurrentLane = newLane;
+
+            const lanePosition = Road.GetLanePosition(env.CurrentLane);
+            
+            const newPosition = Udim2.toScale(lanePosition.x, Car.AbsoluteAnchorPosition.y);
+
+            if(direction){
+                const posTween = Car.CreateTween(Car.Position, newPosition, .1, "easeInQuart");
+                await Car.WaitForTweens(posTween);
+            }else{
+                Car.Position = newPosition;
+            }
+            
+        }
+
+        env.CanUpdate = true;
+    }
+
+
+    //Events declaration
+    const OnLeftEvent = EventHandler.keyPressed(["a", LEFT_ARROW], (event) => {Update(-1);});
+    const OnRightEvent = EventHandler.keyPressed(["d", RIGHT_ARROW], (event) => {Update(1)});
+
+
+    //Setup
+    const LaneSize = Road.GetLaneSize();
+    Car.Resize(LaneSize);
+    Update();
+}   
 
 async function GameSceneUpdate(env, _G){
 
 }
 
-async function GameSceneCleanup(){
+async function GameSceneCleanup(env, _G){
 
 }
 

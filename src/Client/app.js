@@ -1,3 +1,4 @@
+//---------------------------App Initialization------------------------------//
 const app = {
     //App display properties
     displaySettings: {
@@ -62,9 +63,12 @@ const app = {
     /**Returns the scene object for the specified name*/
     GetScene: undefined,
 
+    /**Returns the scene status for the current scene*/
+    GetSceneStatus: undefined,
+
+
     /**Returns the scene object for the current scene*/
     GetCurrentScene: undefined,
-
 
     /**Returns the scene object for the previous scene (if one exists)*/
     GetPreviousScene: undefined,
@@ -105,7 +109,7 @@ const app = {
     
 }   
 
-console.log(app);
+
 
 //---------------------App related functionality----------------------//
 
@@ -168,6 +172,10 @@ app.GetScene = function(SceneName){
     const Scenes = app.registered_scenes;
 
     return SceneName ? Scenes[SceneName] : Scenes;
+}
+
+app.GetSceneStatus = function(){
+    return app.scene_status;
 }
 
 app.GetCurrentScene = function(){
@@ -240,16 +248,15 @@ app.AddElement = function(...NewElements){
 }
 
 app.CreateElement = function(...Data){
-    // console.log(Data);
     const NewElements = [];
 
     for(const ElementData of Data){
         //Creating a new instance of the specified class
         const Obj = new (ElementData.Class)(...ElementData.Args);
-        Obj.Name = ElementData.Name;
-        // console.log(Obj);
-
         const Tags = (typeof(ElementData.Tags) != "object") ? {[ElementData.Tags]: true} : ArrayToObject(ElementData.Tags, true);
+
+        Obj.Name = ElementData.Name;
+        
 
         NewElements.push({
             Name: ElementData.Name,
@@ -260,7 +267,6 @@ app.CreateElement = function(...Data){
     }
 
     app.AddElement(...NewElements);
-    // console.log(app.GetElement());
     return NewElements;
 }
 
@@ -321,7 +327,6 @@ app.RemoveElement = function(...ElementNames){
         delete Elements[ElementName];
     }
 }
-
 app.ClearElements = async function(){
     const ElementNames = [];
 
@@ -329,3 +334,8 @@ app.ClearElements = async function(){
     app.RemoveElement(...ElementNames);
 }
 
+
+
+
+
+//----------------------------------Window event detection---------------------------------//

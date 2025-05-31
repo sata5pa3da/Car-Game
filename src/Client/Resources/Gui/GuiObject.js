@@ -16,7 +16,6 @@ class GuiObject{
         const canvas = GuiObject.GetCanvas();
         const canvasPosition = canvas && canvas.position();
         
-        // console.log(canvasPosition);
         return canvasPosition || DEFAULT_CANVAS_POSITION
     }
 
@@ -24,6 +23,13 @@ class GuiObject{
 
     //-------------------------------Constructor-------------------------------------//
     constructor({
+        Debug = {
+            BorderWidth: 0,
+            BorderColor: null,
+
+        },
+
+
         Name = "",
         Class = "",
         Id = "",
@@ -33,7 +39,7 @@ class GuiObject{
         AnchorPoint = [0,0],
         Position = Udim2.new(),
         Size = Udim2.new(), 
-        Visible} = {}){
+        Visible,} = {}){
         
         
 
@@ -42,6 +48,9 @@ class GuiObject{
         
 
         //Public properties
+        this.Debug = Debug;
+
+
         this.Name = Name;
         this._Class = Class;
         this._Id = Id;
@@ -53,20 +62,23 @@ class GuiObject{
         
         this._Position = typeof(Position) == "function" ? Position() : Position;
         this._AbsolutePosition = {x: 0, y: 0};
+        this._AbsoluteAnchorPosition = {x: 0, y:0};
         
         this._Size = typeof(Size) == "function" ? Size() : Size;
         this._AbsoluteSize = {x: 0, y: 0};
 
         this._Visible = typeof(Visible) == "boolean" ? Visible : true;
-        // console.log(Position, Size, Visible);
     }
 
 
 
+    //-------------------------------------Private Methods------------------------------------//
+    
+
     //-------------------------------------Core Methods----------------------------------------//
 
     //Called when a class that inherits from this class wants to complete their setup
-    Setup(){
+    Setup(args = {}){
         //Calling the custom setup function for the child class's object and initializing the object's methods
         const obj = this.GetObject();
 
@@ -74,6 +86,21 @@ class GuiObject{
         this.Position = this._Position;
         this.Size = this._Size;
 
+
+        //Finalizing the class's metadata and properties/data
+        for(const key in args){
+            if(key.indexOf("_MetaData") == 0){
+                const AdditionalMetaData = args[key];
+                this.MetaData = {...this.MetaData, ...AdditionalMetaData};
+            }else if(key.indexOf("_Data") == 0){
+                const AdditionalData = args[key];
+                for(const dataKey in AdditionalData){
+                    this[dataKey] = AdditionalData[dataKey];
+                }
+            }
+        }
+
+       
 
         //Setting the class and id if this is a p5 element
         const isCustomElement = this.GetMetaData("__isCustomElement");
@@ -112,7 +139,6 @@ class GuiObject{
     //Returns the actual Gui object
     GetObject(){
         const MetaData = this.GetMetaData();
-        // console.log("MetaData:", MetaData);
         const obj = MetaData.__object;
 
         return obj;
@@ -142,9 +168,41 @@ class GuiObject{
     
 
 
+    //Returns the object responsible for the basic rendering & updating of the display
+    GetCustomObjElement(){
+        const elementPath = this.GetMetaData("__elementPath");
+        const elementObj = StringToPath(this, elementPath);
+
+        return elementObj
+    }
+
+
+
    
 
 
+
+
+
+    //This function is called each frame for the gui object
+    DefaultDisplay(){
+        const Debug = this.Debug;
+
+        const [BorderWidth, BorderColor] = [Debug.BorderWidth, Debug.BorderColor];
+        if(typeof(BorderWidth) == "number" && BorderWidth > 0){
+            const [size, pos] = [this._AbsoluteSize, this._AbsolutePosition];
+
+            push();
+            
+            noFill();
+            stroke(BorderColor ? BorderColor.Value : color(0));
+            strokeWeight(Debug.BorderWidth);
+
+            rect(pos.x, pos.y, size.x, size.y);
+
+            pop();
+        }
+    }
     
     //This function is responsible for updating the button displayed onto the screen
     Update(sizeChanged = false){
@@ -162,8 +220,12 @@ class GuiObject{
         
 
         //Updating the absolute position/size property of the object
+        this._AbsoluteAnchorPosition.x = posVector.x;
+        this._AbsoluteAnchorPosition.y = posVector.y;
+
         this._AbsolutePosition.x = absX;
         this._AbsolutePosition.y = absY;
+
 
         this._AbsoluteSize.x = sizeVector.x;
         this._AbsoluteSize.y = sizeVector.y;
@@ -197,8 +259,11 @@ class GuiObject{
         
 
         //Checking if this is a custom element that has a designated method to update its display
-        if(isCustomElement && typeof(this.UpdateDisplay) == "function"){
-            this.UpdateDisplay(this._AbsolutePosition, this._AbsoluteSize, sizeChanged);
+        if(isCustomElement){
+            const elementObj = this.GetCustomObjElement();
+            if(typeof(elementObj.UpdateDisplay) == "function"){
+                elementObj.UpdateDisplay(this._AbsolutePosition, this._AbsoluteSize, sizeChanged);
+            }
         }
     }
 
@@ -207,8 +272,11 @@ class GuiObject{
     Delete(){
         //Checking if this is a custom element that requires a special way to delete its object
         const isCustomElement = this.GetMetaData("__isCustomElement");
-        if(!isCustomElement && typeof(this.DeleteObject) == "function"){
-            this.DeleteObject();
+        if(isCustomElement){
+            const elementObj = this.GetCustomObjElement();
+            if(typeof(elementObj.DeleteObject) == "function"){
+                elementObj.DeleteObject();
+            }
         }else{
             //Deleting the object like normal
             const obj = this.GetObject();
@@ -238,7 +306,6 @@ class GuiObject{
             const This = this;
             return Tween.addMotions(motions, duration, easing_style)
                 .bindToUpdate("__Update", (tween, dt) => {
-                    // value.x.Scale = 
                     This.Update(value == This._Size ? true : false);
                     
                     if(This.GetMetaData("__requiresRefresh")){
@@ -254,7 +321,7 @@ class GuiObject{
         for(const tween of tweens){
             promises.push(tween.startTween(true));
         }
-        // console.log(promises);
+
         return Promise.all(promises);
     }
 
@@ -291,12 +358,17 @@ class GuiObject{
     get AbsolutePosition(){
         return this._AbsolutePosition;
     }
+    get AbsoluteAnchorPosition(){
+        return this._AbsoluteAnchorPosition;
+    }
     get Position(){
         return this._Position;
     }
     set Position(value = Udim2.half){
+        // console.log("Before:", this.AbsolutePosition);
         this._Position = value;
         this.Update();
+        // console.log("After:", this.AbsolutePosition);
     }
 
     get AbsoluteSize(){
@@ -306,6 +378,7 @@ class GuiObject{
         return this._Size;
     }
     set Size(value = Udim2.half){
+        // console.log("Updated!");
         this._Size = value;
         this.Update(true);
     }
@@ -331,6 +404,24 @@ class GuiObject{
 
         this._Visible = value;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    //
+    get Type(){
+        return this.constructor;
+    }
+
+
 
 
 }

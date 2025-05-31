@@ -154,7 +154,6 @@ async function StartSceneSetup(env, _G){
 
    
     env.CanClickPlay = true;
-    // console.log(myB);
     myB_elt.mousePressed((async () => {
         if(!env.CanClickPlay){console.log("Cannot click play!"); return}
         env.CanClickPlay = false;
