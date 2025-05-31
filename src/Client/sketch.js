@@ -27,6 +27,7 @@ async function LoadAssets(){
 }
 let myB;
 async function setup(){
+    console.log("???");
     //Loading stuff
     await LoadAssets();
 
@@ -39,7 +40,7 @@ async function setup(){
     
     
     app.loaded = true;
-
+    console.log("Hello");
 
     const testElement = {
         //
@@ -73,6 +74,7 @@ async function setup(){
 }
 
 async function draw(){
+    console.log("??");
     if(!app.loaded || (app.registered_scenes_amount < app.scenes.length)){return}
 
     if(app.processed){return}
@@ -114,6 +116,7 @@ async function draw(){
     
     app.processed = false;
 }
+
 
 //-----------------Canvas Related Update Methods-------------------//
 function windowResized() {
